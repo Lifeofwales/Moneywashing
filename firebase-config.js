@@ -8,10 +8,10 @@
    ========================================================== */
 
 export const firebaseConfig = {
-  apiKey: "PASTE_YOUR_API_KEY_HERE",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.firebasestorage.app",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "YOUR_REAL_API_KEY",
+  authDomain: "moneywashing.firebaseapp.com",
+  projectId: "moneywashing",
+  storageBucket: "moneywashing.firebasestorage.app",
+  messagingSenderId: "1092797198587",
+  appId: "1:1092797198587:web:0966d02abc34f745d7805e"
 };
