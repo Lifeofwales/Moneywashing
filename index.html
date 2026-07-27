@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Shared roleplay transaction tracker" />
+  <title>Money Washing Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">MW</div>
+        <div>
+          <h1 id="siteTitle">Money Washing</h1>
+          <p id="siteSubtitle">Shared RP Tracker</p>
+        </div>
+      </div>
+
+      <nav class="nav-list" aria-label="Main navigation">
+        <button class="nav-item active" data-view="dashboard">Dashboard</button>
+        <button class="nav-item" data-view="new-entry">New Entry</button>
+        <button class="nav-item" data-view="records">All Records</button>
+        <button class="nav-item" data-view="settings">Customization</button>
+      </nav>
+
+      <div class="connection-card">
+        <span id="connectionDot" class="status-dot"></span>
+        <div>
+          <strong id="connectionLabel">Checking connection</strong>
+          <small id="connectionHelp">Firebase shared database</small>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">ROLEPLAY BUSINESS MANAGEMENT</p>
+          <h2 id="pageTitle">Dashboard</h2>
+        </div>
+        <button id="quickAddButton" class="primary-button">+ New Entry</button>
+      </header>
+
+      <section id="dashboardView" class="view active">
+        <div class="stats-grid">
+          <article class="stat-card">
+            <span>Total Amount</span>
+            <strong id="totalAmount">0</strong>
+            <small>All saved entries</small>
+          </article>
+          <article class="stat-card">
+            <span>Total Value</span>
+            <strong id="totalValue">$0</strong>
+            <small>Calculated amount × rate</small>
+          </article>
+          <article class="stat-card">
+            <span>Transactions</span>
+            <strong id="transactionCount">0</strong>
+            <small>Shared records</small>
+          </article>
+          <article class="stat-card">
+            <span>Top Group</span>
+            <strong id="topGroup">—</strong>
+            <small>Highest total value</small>
+          </article>
+        </div>
+
+        <div class="panel split-panel">
+          <div>
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">GROUP BREAKDOWN</p>
+                <h3>Performance</h3>
+              </div>
+            </div>
+            <div id="groupBreakdown" class="group-breakdown"></div>
+          </div>
+          <div>
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">RECENT ACTIVITY</p>
+                <h3>Latest Entries</h3>
+              </div>
+              <button class="text-button" data-go-view="records">View all</button>
+            </div>
+            <div id="recentEntries" class="recent-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="newEntryView" class="view">
+        <div class="panel form-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">ADD OR UPDATE</p>
+              <h3 id="formHeading">New Transaction</h3>
+            </div>
+            <button id="cancelEditButton" class="secondary-button hidden">Cancel Edit</button>
+          </div>
+
+          <form id="entryForm">
+            <input id="recordId" type="hidden" />
+            <div class="form-grid">
+              <label>
+                Group
+                <select id="group" required></select>
+              </label>
+              <label>
+                Buyer
+                <input id="buyer" type="text" placeholder="Example: Axel Steel" required maxlength="80" />
+              </label>
+              <label>
+                Amount
+                <input id="amount" type="number" min="0" step="1" placeholder="0" required />
+              </label>
+              <label>
+                Unit Price
+                <input id="unitPrice" type="number" min="0" step="0.01" required />
+              </label>
+              <label>
+                Account Used
+                <input id="accountUsed" type="text" placeholder="Example: Gang" maxlength="80" />
+              </label>
+              <label>
+                Date
+                <input id="transactionDate" type="date" required />
+              </label>
+              <label class="full-width">
+                Notes
+                <textarea id="notes" rows="4" placeholder="Optional notes about this RP transaction" maxlength="500"></textarea>
+              </label>
+            </div>
+
+            <div class="calculation-preview">
+              <span>Calculated Total</span>
+              <strong id="calculatedTotal">$0</strong>
+              <small>Amount × Unit Price</small>
+            </div>
+
+            <div class="form-actions">
+              <button type="reset" class="secondary-button">Clear</button>
+              <button id="saveButton" type="submit" class="primary-button">Save Entry</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section id="recordsView" class="view">
+        <div class="panel">
+          <div class="records-toolbar">
+            <div>
+              <p class="eyebrow">SHARED DATABASE</p>
+              <h3>All Records</h3>
+            </div>
+            <div class="filter-row">
+              <input id="searchInput" type="search" placeholder="Search buyer, account, or notes" />
+              <select id="groupFilter"><option value="all">All groups</option></select>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Group</th>
+                  <th>Buyer</th>
+                  <th>Amount</th>
+                  <th>Unit Price</th>
+                  <th>Total</th>
+                  <th>Account</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="recordsTableBody"></tbody>
+            </table>
+          </div>
+          <div id="emptyRecords" class="empty-state hidden">No records match your search.</div>
+        </div>
+      </section>
+
+      <section id="settingsView" class="view">
+        <div class="panel settings-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">EASY CUSTOMIZATION</p>
+              <h3>What You Can Change</h3>
+            </div>
+          </div>
+          <div class="settings-grid">
+            <article><strong>Branding</strong><p>Edit the site name, subtitle, colors, groups, and default unit price inside <code>customize.js</code>.</p></article>
+            <article><strong>Database</strong><p>Paste your Firebase values into <code>firebase-config.js</code>. Everyone using the site will then see the same records.</p></article>
+            <article><strong>Hosting</strong><p>Upload these files to GitHub Pages, Firebase Hosting, or another static host.</p></article>
+            <article><strong>Permissions</strong><p>The included starter rules allow shared access. Add Firebase Authentication before using private or real-world information.</p></article>
+          </div>
+          <div class="code-note">
+            <strong>RP use only</strong>
+            <p>This tracker is designed for fictional roleplay records. Do not store real bank details, passwords, government IDs, or other sensitive personal information.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="customize.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
