@@ -313,7 +313,10 @@ function bindEvents() {
   document.querySelectorAll("[data-go-view]").forEach((item) => item.addEventListener("click", () => showView(item.dataset.goView)));
   $("quickAddButton").addEventListener("click", () => { resetForm(); showView("new-entry"); });
   $("entryForm").addEventListener("submit", saveEntry);
-  $("entryForm").addEventListener("reset", () => setTimeout(resetForm, 0));
+$("entryForm").querySelector('button[type="reset"]').addEventListener("click", (event) => {
+  event.preventDefault();
+  resetForm();
+});
   $("cancelEditButton").addEventListener("click", resetForm);
   $("amount").addEventListener("input", calculateTotal);
   $("unitPrice").addEventListener("input", calculateTotal);
