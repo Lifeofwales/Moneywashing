@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Starter rules for an RP site. Anyone with the website can read/write.
+    // For private information, replace this with authenticated-user rules.
+    match /rp_transactions/{recordId} {
+      allow read, create, update, delete: if true;
+    }
+  }
+}
