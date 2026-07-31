@@ -1,44 +1,65 @@
-# Shared RP Transaction Tracker
+# Moneywashing V2
 
-This website was built from the uploaded spreadsheet layout. It includes:
+This version keeps the existing Firebase project and the existing
+`rp_transactions` collection, so previously saved transaction records remain available.
 
-- BV and Dreaded group tracking
-- Buyer, amount, unit price, calculated total, account used, date, and notes
-- Shared live records through Firebase Firestore
-- Dashboard totals and group breakdown
-- Search, filter, edit, and delete
-- Mobile-friendly layout
-- A separate `customize.js` file for easy branding changes
-- Local demo mode until Firebase is connected
+## New features
 
-## 1. Preview it
+- Firebase-backed Admin Panel
+- Add, edit, and remove gangs from the website
+- Gang-specific unit prices
+- Gang-specific badge and dashboard colors
+- Editable website title, subtitle, accent color, and default price
+- Live updates for every connected user
+- Existing transaction editing, deletion, search, and dashboard totals
+- LSSR included as a starter gang
 
-Open `index.html` with a local web server. VS Code's **Live Server** extension works well. Because the project uses JavaScript modules, double-clicking the HTML file may not load Firebase correctly.
+## Uploading to GitHub Pages
 
-## 2. Connect Firebase for shared saving
+1. Back up the current repository files.
+2. Upload the contents of this folder to the root of the `Moneywashing` repository.
+3. Replace the old files when GitHub asks.
+4. Commit directly to the main branch.
+5. Wait about one minute.
+6. Open:
+   `https://lifeofwales.github.io/Moneywashing/?v=2`
+7. Press `Ctrl + Shift + R`.
 
-1. Create a project in Firebase Console.
-2. Add a Web App to the project.
-3. Open **Firestore Database** and create a database.
-4. Copy your Web App's configuration into `firebase-config.js`.
-5. In Firestore Rules, paste the contents of `firestore.rules`, then publish.
+## Required Firestore rules
 
-The included rules are intentionally simple so the shared site works immediately. Anyone who can access the site can edit or delete entries. For private records, add Firebase Authentication and stricter rules.
+Publish the included `firestore.rules` file in:
 
-## 3. Customize it
+Firebase Console → Firestore → Rules
 
-Open `customize.js` to change:
+The rules are temporarily open because Discord authentication has not been added yet.
+Anyone with the website link can currently change Admin Panel settings.
 
-- Website title and subtitle
-- Default unit price
-- Group names
-- Group colors
-- Main website colors
+## First launch
 
-## 4. Put it online
+The site checks for:
 
-You can upload the folder to GitHub Pages. Keep all files in the same folder. Once Firebase is configured, visitors using the GitHub Pages link will share the same database.
+`app_settings/config`
 
-## Important
+If it does not exist, it automatically creates it with:
 
-This site is intended for fictional roleplay tracking. Do not store real financial account information, passwords, identification numbers, or other sensitive data.
+- BV
+- Dreaded
+- LSSR
+
+All three initially use a $60 unit price, which can be changed in the Admin Panel.
+
+## Existing records
+
+The V2 site reads the same collection as the previous site:
+
+`rp_transactions`
+
+Do not delete this collection if you want to preserve old records.
+
+## Next security upgrade
+
+Add Discord authentication, then change Firestore rules so:
+
+- Signed-in members can view and add records
+- Managers can edit records
+- Admins can delete records and change `app_settings`
