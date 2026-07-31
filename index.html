@@ -1,38 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Shared roleplay transaction tracker" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090d18">
   <title>Money Washing Tracker</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=1">
 </head>
 <body>
   <div class="app-shell">
     <aside class="sidebar">
       <div class="brand">
-        <div class="brand-mark">MW</div>
+        <div class="brand-mark">$</div>
         <div>
-          <h1 id="siteTitle">Money Washing</h1>
-          <p id="siteSubtitle">Shared RP Tracker</p>
+          <h1 id="siteTitle">Money Washing Tracker</h1>
+          <p id="siteSubtitle">Shared transaction records</p>
         </div>
       </div>
 
       <nav class="nav-list" aria-label="Main navigation">
-        <button class="nav-item active" data-view="dashboard">Dashboard</button>
-        <button class="nav-item" data-view="new-entry">New Entry</button>
-        <button class="nav-item" data-view="records">All Records</button>
-        <button class="nav-item" data-view="settings">Customization</button>
+        <button class="nav-item active" data-view="dashboard">
+          <span>⌂</span> Dashboard
+        </button>
+        <button class="nav-item" data-view="new-entry">
+          <span>＋</span> New Entry
+        </button>
+        <button class="nav-item" data-view="records">
+          <span>▤</span> All Records
+        </button>
+        <button class="nav-item" data-view="admin">
+          <span>⚙</span> Admin Panel
+        </button>
       </nav>
 
       <div class="connection-card">
-        <span id="connectionDot" class="status-dot"></span>
+        <span id="connectionDot" class="connection-dot"></span>
         <div>
-          <strong id="connectionLabel">Checking connection</strong>
-          <small id="connectionHelp">Firebase shared database</small>
+          <strong id="connectionLabel">Connecting…</strong>
+          <small id="connectionHelp">Checking Firebase</small>
         </div>
       </div>
     </aside>
@@ -40,10 +45,10 @@
     <main class="main-content">
       <header class="topbar">
         <div>
-          <p class="eyebrow">ROLEPLAY BUSINESS MANAGEMENT</p>
+          <p class="eyebrow">MONEYWASHING V2</p>
           <h2 id="pageTitle">Dashboard</h2>
         </div>
-        <button id="quickAddButton" class="primary-button">+ New Entry</button>
+        <button id="quickAddButton" class="primary-button">＋ New Entry</button>
       </header>
 
       <section id="dashboardView" class="view active">
@@ -51,115 +56,122 @@
           <article class="stat-card">
             <span>Total Amount</span>
             <strong id="totalAmount">0</strong>
-            <small>All saved entries</small>
+            <small>All units recorded</small>
           </article>
           <article class="stat-card">
             <span>Total Value</span>
             <strong id="totalValue">$0</strong>
-            <small>Calculated amount × rate</small>
+            <small>Calculated transaction value</small>
           </article>
           <article class="stat-card">
             <span>Transactions</span>
             <strong id="transactionCount">0</strong>
-            <small>Shared records</small>
+            <small>Total saved entries</small>
           </article>
           <article class="stat-card">
-            <span>Top Group</span>
+            <span>Top Gang</span>
             <strong id="topGroup">—</strong>
             <small>Highest total value</small>
           </article>
         </div>
 
-        <div class="panel split-panel">
-          <div>
+        <div class="dashboard-grid">
+          <section class="panel">
             <div class="panel-heading">
               <div>
-                <p class="eyebrow">GROUP BREAKDOWN</p>
-                <h3>Performance</h3>
+                <p class="eyebrow">BREAKDOWN</p>
+                <h3>Gang Totals</h3>
               </div>
             </div>
             <div id="groupBreakdown" class="group-breakdown"></div>
-          </div>
-          <div>
+          </section>
+
+          <section class="panel">
             <div class="panel-heading">
               <div>
-                <p class="eyebrow">RECENT ACTIVITY</p>
-                <h3>Latest Entries</h3>
+                <p class="eyebrow">LATEST</p>
+                <h3>Recent Entries</h3>
               </div>
               <button class="text-button" data-go-view="records">View all</button>
             </div>
             <div id="recentEntries" class="recent-list"></div>
-          </div>
+          </section>
         </div>
       </section>
 
       <section id="newEntryView" class="view">
-        <div class="panel form-panel">
+        <form id="entryForm" class="panel entry-form">
+          <input id="recordId" type="hidden">
+
           <div class="panel-heading">
             <div>
-              <p class="eyebrow">ADD OR UPDATE</p>
+              <p class="eyebrow">TRANSACTION</p>
               <h3 id="formHeading">New Transaction</h3>
             </div>
-            <button id="cancelEditButton" class="secondary-button hidden">Cancel Edit</button>
           </div>
 
-          <form id="entryForm">
-            <input id="recordId" type="hidden" />
-            <div class="form-grid">
-              <label>
-                Group
-                <select id="group" required></select>
-              </label>
-              <label>
-                Buyer
-                <input id="buyer" type="text" placeholder="Example: Axel Steel" required maxlength="80" />
-              </label>
-              <label>
-                Amount
-                <input id="amount" type="number" min="0" step="1" placeholder="0" required />
-              </label>
-              <label>
-                Unit Price
-                <input id="unitPrice" type="number" min="0" step="0.01" required />
-              </label>
-              <label>
-                Account Used
-                <input id="accountUsed" type="text" placeholder="Example: Gang" maxlength="80" />
-              </label>
-              <label>
-                Date
-                <input id="transactionDate" type="date" required />
-              </label>
-              <label class="full-width">
-                Notes
-                <textarea id="notes" rows="4" placeholder="Optional notes about this RP transaction" maxlength="500"></textarea>
-              </label>
-            </div>
+          <div class="form-grid">
+            <label>
+              Gang
+              <select id="group" required></select>
+            </label>
 
-            <div class="calculation-preview">
-              <span>Calculated Total</span>
-              <strong id="calculatedTotal">$0</strong>
-              <small>Amount × Unit Price</small>
-            </div>
+            <label>
+              Buyer
+              <input id="buyer" type="text" maxlength="80" placeholder="Enter buyer name" required>
+            </label>
 
-            <div class="form-actions">
-              <button type="reset" class="secondary-button">Clear</button>
-              <button id="saveButton" type="submit" class="primary-button">Save Entry</button>
-            </div>
-          </form>
-        </div>
+            <label>
+              Amount
+              <input id="amount" type="number" min="0" step="0.01" placeholder="0" required>
+            </label>
+
+            <label>
+              Unit Price
+              <input id="unitPrice" type="number" min="0" step="0.01" placeholder="0" required>
+            </label>
+
+            <label>
+              Account Used
+              <input id="accountUsed" type="text" maxlength="100" placeholder="Enter account used">
+            </label>
+
+            <label>
+              Date
+              <input id="transactionDate" type="date" required>
+            </label>
+
+            <label class="full-width">
+              Notes
+              <textarea id="notes" rows="4" maxlength="500" placeholder="Optional notes"></textarea>
+            </label>
+          </div>
+
+          <div class="total-preview">
+            <span>Calculated Total</span>
+            <strong id="calculatedTotal">$0.00</strong>
+          </div>
+
+          <div class="form-actions">
+            <button id="saveButton" class="primary-button" type="submit">Save Entry</button>
+            <button class="secondary-button" type="reset">Clear</button>
+            <button id="cancelEditButton" class="text-button hidden" type="button">Cancel Edit</button>
+          </div>
+        </form>
       </section>
 
       <section id="recordsView" class="view">
-        <div class="panel">
-          <div class="records-toolbar">
+        <section class="panel">
+          <div class="panel-heading records-heading">
             <div>
-              <p class="eyebrow">SHARED DATABASE</p>
+              <p class="eyebrow">DATABASE</p>
               <h3>All Records</h3>
             </div>
-            <div class="filter-row">
-              <input id="searchInput" type="search" placeholder="Search buyer, account, or notes" />
-              <select id="groupFilter"><option value="all">All groups</option></select>
+            <div class="filters">
+              <input id="searchInput" type="search" placeholder="Search buyer, account, or notes">
+              <select id="groupFilter">
+                <option value="all">All gangs</option>
+              </select>
             </div>
           </div>
 
@@ -168,7 +180,7 @@
               <thead>
                 <tr>
                   <th>Date</th>
-                  <th>Group</th>
+                  <th>Gang</th>
                   <th>Buyer</th>
                   <th>Amount</th>
                   <th>Unit Price</th>
@@ -180,28 +192,88 @@
               <tbody id="recordsTableBody"></tbody>
             </table>
           </div>
-          <div id="emptyRecords" class="empty-state hidden">No records match your search.</div>
-        </div>
+          <div id="emptyRecords" class="empty-state hidden">No records match your filters.</div>
+        </section>
       </section>
 
-      <section id="settingsView" class="view">
-        <div class="panel settings-panel">
-          <div class="panel-heading">
-            <div>
-              <p class="eyebrow">EASY CUSTOMIZATION</p>
-              <h3>What You Can Change</h3>
+      <section id="adminView" class="view">
+        <div class="admin-warning">
+          <strong>Temporary open admin access</strong>
+          <p>Until Discord authentication is added, anyone with the website link can change these settings.</p>
+        </div>
+
+        <div class="admin-grid">
+          <form id="brandingForm" class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">BRANDING</p>
+                <h3>Website Settings</h3>
+              </div>
             </div>
-          </div>
-          <div class="settings-grid">
-            <article><strong>Branding</strong><p>Edit the site name, subtitle, colors, groups, and default unit price inside <code>customize.js</code>.</p></article>
-            <article><strong>Database</strong><p>Paste your Firebase values into <code>firebase-config.js</code>. Everyone using the site will then see the same records.</p></article>
-            <article><strong>Hosting</strong><p>Upload these files to GitHub Pages, Firebase Hosting, or another static host.</p></article>
-            <article><strong>Permissions</strong><p>The included starter rules allow shared access. Add Firebase Authentication before using private or real-world information.</p></article>
-          </div>
-          <div class="code-note">
-            <strong>RP use only</strong>
-            <p>This tracker is designed for fictional roleplay records. Do not store real bank details, passwords, government IDs, or other sensitive personal information.</p>
-          </div>
+
+            <div class="form-grid single-column">
+              <label>
+                Website Title
+                <input id="adminSiteTitle" type="text" maxlength="60" required>
+              </label>
+              <label>
+                Subtitle
+                <input id="adminSiteSubtitle" type="text" maxlength="100" required>
+              </label>
+              <label>
+                Main Accent Color
+                <div class="color-row">
+                  <input id="adminPrimaryColor" type="color">
+                  <input id="adminPrimaryColorText" type="text" maxlength="7" placeholder="#5ba8ff">
+                </div>
+              </label>
+              <label>
+                Default Unit Price
+                <input id="adminDefaultPrice" type="number" min="0" step="0.01" required>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button class="primary-button" type="submit">Save Website Settings</button>
+            </div>
+          </form>
+
+          <section class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">GANGS</p>
+                <h3>Manage Gangs</h3>
+              </div>
+            </div>
+
+            <div id="gangList" class="gang-admin-list"></div>
+
+            <form id="gangForm" class="gang-form">
+              <input id="gangEditId" type="hidden">
+              <div class="form-grid">
+                <label>
+                  Gang Name
+                  <input id="gangName" type="text" maxlength="50" placeholder="LSSR" required>
+                </label>
+                <label>
+                  Unit Price
+                  <input id="gangPrice" type="number" min="0" step="0.01" required>
+                </label>
+                <label>
+                  Color
+                  <div class="color-row">
+                    <input id="gangColor" type="color" value="#16a34a">
+                    <input id="gangColorText" type="text" maxlength="7" value="#16a34a">
+                  </div>
+                </label>
+              </div>
+
+              <div class="form-actions">
+                <button id="gangSaveButton" class="primary-button" type="submit">Add Gang</button>
+                <button id="gangCancelButton" class="text-button hidden" type="button">Cancel Edit</button>
+              </div>
+            </form>
+          </section>
         </div>
       </section>
     </main>
@@ -209,7 +281,6 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script src="customize.js"></script>
-  <script type="module" src="script.js"></script>
+  <script type="module" src="main.js?v=5"></script>
 </body>
 </html>
