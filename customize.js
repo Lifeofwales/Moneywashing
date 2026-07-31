@@ -11,7 +11,8 @@ window.SITE_SETTINGS = {
   // Add, remove, or rename groups here.
   groups: [
     { name: "BV", accent: "#5da9ff" },
-    { name: "Dreaded", accent: "#a4a9b1" }
+    { name: "Dreaded", accent: "#a4a9b1" },
+    { name: "LSSR", accent: "#16A34A"}
   ],
 
   // Main website colors.
