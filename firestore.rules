@@ -1,9 +1,16 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Starter rules for an RP site. Anyone with the website can read/write.
-    // For private information, replace this with authenticated-user rules.
+
+    // Temporary open access for the transaction tracker.
+    // Replace these rules after Discord/Firebase Authentication is added.
     match /rp_transactions/{recordId} {
+      allow read, create, update, delete: if true;
+    }
+
+    // Temporary open access for V2 website and gang settings.
+    match /app_settings/{settingId} {
       allow read, create, update, delete: if true;
     }
   }
