@@ -11,7 +11,7 @@ import {
   serverTimestamp
 } from "./firebase.js";
 import { state, TRANSACTIONS_COLLECTION } from "./state.js";
-import { getSession } from "./auth.js";
+import { getSession } from "./auth.js?v=13";
 import {
   $,
   showView,
