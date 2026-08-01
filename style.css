@@ -2163,3 +2163,80 @@ input[type="color"] {
     justify-content: flex-end;
   }
 }
+
+
+.analytics-ranking-row {
+  grid-template-columns:
+    auto
+    auto
+    minmax(0, 1fr)
+    auto
+    auto
+    auto;
+}
+
+.analytics-hide-employee {
+  align-self: center;
+  padding: 7px 9px;
+  border: 1px solid rgba(255, 102, 119, 0.32);
+  border-radius: 8px;
+  color: var(--danger);
+  background: rgba(255, 102, 119, 0.07);
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.employee-ranking-manager-panel {
+  margin-top: 18px;
+}
+
+.ranking-manager-help {
+  margin: -4px 0 16px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.hidden-ranking-employees-list {
+  display: grid;
+  gap: 10px;
+}
+
+.hidden-ranking-employee {
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface-2);
+}
+
+.hidden-ranking-employee strong,
+.hidden-ranking-employee small {
+  display: block;
+}
+
+.hidden-ranking-employee small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+@media (max-width: 900px) {
+  .analytics-ranking-row {
+    grid-template-columns: auto auto minmax(0, 1fr);
+  }
+
+  .analytics-ranking-metric,
+  .analytics-hide-employee {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 620px) {
+  .hidden-ranking-employee {
+    grid-template-columns: 1fr;
+  }
+}

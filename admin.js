@@ -30,6 +30,10 @@ import { renderAll, resetTransactionForm } from "./transactions.js";
 import { getSession } from "./auth.js";
 import { isOwner, isAdministrator, can } from "./permissions.js";
 import { writeAuditLog } from "./audit.js";
+import {
+  renderHiddenRankingEmployees,
+  bindRankingManagementEvents
+} from "./rankings.js";
 
 const ACCESS_USERS_COLLECTION = "access_users";
 let accessUsers = [];
@@ -81,6 +85,7 @@ export function startSettingsListener() {
     populateBrandingForm();
     renderGangList();
     renderNavigationLayoutManager();
+    renderHiddenRankingEmployees();
     renderAll();
 
     if (!state.editingRecordId) {
@@ -535,6 +540,7 @@ export function applyAdminPermissions() {
   $("gangForm")?.classList.toggle("permission-locked", !manageGangs);
   $("userManagementPanel")?.classList.toggle("hidden", !manageUsers);
   $("navigationLayoutPanel")?.classList.toggle("hidden", !isOwner());
+  $("employeeRankingManagerPanel")?.classList.toggle("hidden", !isOwner());
 
   $("brandingForm")
     ?.querySelectorAll("input, select, textarea, button")
@@ -834,6 +840,8 @@ export function bindAdminEvents() {
     handleNavigationDragEnd
   );
 
+  bindRankingManagementEvents();
+
   syncColorPicker("adminPrimaryColor", "adminPrimaryColorText");
   syncColorPicker("gangColor", "gangColorText");
 
@@ -871,6 +879,7 @@ export function bindAdminEvents() {
     ...(state.settings.navigationOrder || DEFAULT_NAVIGATION_ORDER)
   ];
   renderNavigationLayoutManager();
+  renderHiddenRankingEmployees();
   startUsersListener();
   applyAdminPermissions();
 }

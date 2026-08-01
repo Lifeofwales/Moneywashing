@@ -22,6 +22,7 @@ export const fallbackSettings = {
   primaryColor: "#5ba8ff",
   defaultUnitPrice: 60,
   navigationOrder: [...DEFAULT_NAVIGATION_ORDER],
+  hiddenRankingEmployees: [],
   gangs: [
     { id: "bv", name: "BV", accent: "#5ba8ff", unitPrice: 60 },
     { id: "dreaded", name: "Dreaded", accent: "#a879ff", unitPrice: 60 },
@@ -84,6 +85,16 @@ export function normalizeSettings(data = {}) {
     primaryColor: normalizeHex(data.primaryColor, fallbackSettings.primaryColor),
     defaultUnitPrice: Number(data.defaultUnitPrice ?? fallbackSettings.defaultUnitPrice) || 0,
     navigationOrder,
+    hiddenRankingEmployees: Array.isArray(data.hiddenRankingEmployees)
+      ? data.hiddenRankingEmployees
+          .map((employee) => ({
+            key: String(employee?.key || "").trim().toLowerCase(),
+            name: String(employee?.name || "Legacy Records").trim(),
+            hiddenAt: String(employee?.hiddenAt || ""),
+            hiddenBy: String(employee?.hiddenBy || "")
+          }))
+          .filter((employee) => employee.key)
+      : [],
     gangs
   };
 }

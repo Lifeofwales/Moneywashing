@@ -1,6 +1,10 @@
 import { state } from "./state.js";
 import { $, formatCurrency, formatNumber, safeText, groupColor, showToast } from "./ui.js";
-import { currentRole } from "./permissions.js";
+import { currentRole, isOwner } from "./permissions.js";
+import {
+  rankingEmployeeName,
+  isEmployeeHidden
+} from "./rankings.js";
 
 let filteredRecords = [];
 
@@ -95,10 +99,12 @@ function dailySeries(records) {
 }
 
 function employeeName(record) {
-  return (
-    record.createdBy?.discordName ||
-    record.updatedBy?.discordName ||
-    "Unknown User"
+  return rankingEmployeeName(record);
+}
+
+function visibleEmployeeRecords(records) {
+  return records.filter(
+    (record) => !isEmployeeHidden(employeeName(record))
   );
 }
 
@@ -138,9 +144,9 @@ function calculateOverview(records) {
   setText("analyticsTransactionCount", formatNumber(records.length));
 
   const uniqueEmployees = new Set(
-    records
+    visibleEmployeeRecords(records)
       .map(employeeName)
-      .filter((name) => name && name !== "Unknown User")
+      .filter((name) => name && name !== "Legacy Records")
   );
 
   setText("analyticsEmployeeCount", formatNumber(uniqueEmployees.size));
@@ -208,7 +214,10 @@ function renderEmployeeAnalytics(records) {
   const container = $("analyticsEmployeeList");
   if (!container) return;
 
-  const grouped = groupBy(records, employeeName);
+  const grouped = groupBy(
+    visibleEmployeeRecords(records),
+    employeeName
+  );
 
   const rows = Object.entries(grouped)
     .map(([name, employeeRecords]) => {
@@ -259,13 +268,25 @@ function renderEmployeeAnalytics(records) {
         <strong>${formatCurrency(row.average)}</strong>
         <small>Average</small>
       </div>
+      ${isOwner() ? `
+        <button
+          class="analytics-hide-employee"
+          type="button"
+          data-hide-ranking-employee="${safeText(row.name)}"
+        >
+          Hide
+        </button>
+      ` : ""}
     </article>
   `).join("");
 }
 
 function renderLeaderboards(records) {
   const gangGroups = groupBy(records, (record) => record.group);
-  const employeeGroups = groupBy(records, employeeName);
+  const employeeGroups = groupBy(
+    visibleEmployeeRecords(records),
+    employeeName
+  );
 
   const topGang = Object.entries(gangGroups)
     .map(([name, items]) => ({ name, value: sum(items) }))
@@ -495,7 +516,9 @@ function renderCharts(records) {
 
   drawBarChart($("analyticsGangChart"), gangRows);
 
-  const employeeRows = Object.entries(groupBy(records, employeeName))
+  const employeeRows = Object.entries(
+    groupBy(visibleEmployeeRecords(records), employeeName)
+  )
     .map(([name, items]) => ({
       label: name,
       value: sum(items),

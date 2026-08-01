@@ -21,7 +21,8 @@ const ROLE_PERMISSIONS = {
     viewRuns: true,
     createRuns: true,
     manageRuns: true,
-    manageDiscordIntegration: true
+    manageDiscordIntegration: true,
+    manageEmployeeRankings: true
   },
   admin: {
     view: true,
@@ -43,7 +44,8 @@ const ROLE_PERMISSIONS = {
     viewRuns: true,
     createRuns: true,
     manageRuns: true,
-    manageDiscordIntegration: false
+    manageDiscordIntegration: false,
+    manageEmployeeRankings: false
   },
   manager: {
     view: true,
@@ -65,7 +67,8 @@ const ROLE_PERMISSIONS = {
     viewRuns: true,
     createRuns: true,
     manageRuns: true,
-    manageDiscordIntegration: false
+    manageDiscordIntegration: false,
+    manageEmployeeRankings: false
   },
   employee: {
     view: true,
@@ -87,7 +90,8 @@ const ROLE_PERMISSIONS = {
     viewRuns: true,
     createRuns: true,
     manageRuns: false,
-    manageDiscordIntegration: false
+    manageDiscordIntegration: false,
+    manageEmployeeRankings: false
   },
   viewer: {
     view: true,
@@ -109,7 +113,8 @@ const ROLE_PERMISSIONS = {
     viewRuns: true,
     createRuns: false,
     manageRuns: false,
-    manageDiscordIntegration: false
+    manageDiscordIntegration: false,
+    manageEmployeeRankings: false
   }
 };
 
