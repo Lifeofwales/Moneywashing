@@ -371,13 +371,23 @@ async function saveUser(event) {
   }
 
   const editId = $("userEditId").value.trim();
-  const discordId = $("userDiscordId").value.trim();
-  const displayName = $("userDisplayName").value.trim();
-  const role = $("userRole").value;
-  const active = $("userActive").checked;
 
-  if (!/^\d+$/.test(discordId) || discordId.length < 15 || discordId.length > 25) {
-  showToast("Enter a valid Discord User ID.", true);
+// Clean the Discord ID in case extra characters were pasted
+const rawDiscordId = $("userDiscordId").value;
+const discordId = rawDiscordId.replace(/\D/g, "");
+
+const displayName = $("userDisplayName").value.trim();
+const role = $("userRole").value;
+const active = $("userActive").checked();
+
+// Put the cleaned value back into the textbox
+$("userDiscordId").value = discordId;
+
+if (discordId.length < 15 || discordId.length > 25) {
+  showToast(
+    `Invalid Discord User ID (${discordId.length} digits found).`,
+    true
+  );
   return;
 }
 
