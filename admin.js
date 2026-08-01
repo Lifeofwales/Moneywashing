@@ -1,8 +1,10 @@
 import {
   db,
+  collection,
   doc,
   getDoc,
   setDoc,
+  deleteDoc,
   onSnapshot
 } from "./firebase.js";
 import {
@@ -24,6 +26,10 @@ import {
 } from "./ui.js";
 import { renderAll, resetTransactionForm } from "./transactions.js";
 import { getSession } from "./auth.js";
+
+const ACCESS_USERS_COLLECTION = "access_users";
+let accessUsers = [];
+let stopUsersListener = null;
 
 function settingsReference() {
   return doc(db, SETTINGS_COLLECTION, SETTINGS_DOCUMENT);
@@ -200,6 +206,8 @@ async function saveGang(event) {
     editId ? "Gang updated." : "Gang added."
   );
   resetGangForm();
+  resetUserForm();
+  startUsersListener();
 }
 
 async function deleteGang(id) {
@@ -233,10 +241,223 @@ function syncColorPicker(pickerId, textId) {
   });
 }
 
+
+function isOwner() {
+  return getSession().role === "owner" || getSession().isOwner === true;
+}
+
+function startUsersListener() {
+  if (stopUsersListener) {
+    stopUsersListener();
+  }
+
+  stopUsersListener = onSnapshot(
+    collection(db, ACCESS_USERS_COLLECTION),
+    (snapshot) => {
+      accessUsers = snapshot.docs
+        .map((item) => ({
+          id: item.id,
+          ...item.data()
+        }))
+        .sort((a, b) =>
+          String(a.displayName || a.discordId || "")
+            .localeCompare(String(b.displayName || b.discordId || ""))
+        );
+
+      renderUsers();
+    },
+    (error) => {
+      console.error(error);
+      showToast("Could not load approved users.", true);
+    }
+  );
+}
+
+function roleLabel(role) {
+  const labels = {
+    owner: "👑 Owner",
+    admin: "🛡 Administrator",
+    manager: "👔 Manager",
+    employee: "👷 Employee",
+    viewer: "👀 Viewer"
+  };
+
+  return labels[role] || "Unknown";
+}
+
+function renderUsers() {
+  const container = $("userList");
+
+  if (!container) return;
+
+  if (!isOwner()) {
+    container.innerHTML =
+      '<div class="empty-state">Only the Owner can manage users.</div>';
+    $("userForm")?.classList.add("hidden");
+    return;
+  }
+
+  $("userForm")?.classList.remove("hidden");
+
+  if (!accessUsers.length) {
+    container.innerHTML =
+      '<div class="empty-state">No approved users have been added.</div>';
+    return;
+  }
+
+  container.innerHTML = accessUsers.map((user) => `
+    <article class="user-admin-item">
+      <div class="user-admin-main">
+        <strong>${safeText(user.displayName || "Unnamed User")}</strong>
+        <small>${safeText(user.discordId || user.id)}</small>
+      </div>
+
+      <span class="role-badge role-${safeText(user.role || "viewer")}">
+        ${roleLabel(user.role)}
+      </span>
+
+      <span class="status-badge ${user.active === true ? "active" : "disabled"}">
+        ${user.active === true ? "Active" : "Disabled"}
+      </span>
+
+      <div class="user-admin-actions">
+        <button data-user-edit="${user.id}">Edit</button>
+        <button
+          class="danger-action"
+          data-user-delete="${user.id}"
+          ${user.id === getSession().user?.uid?.replace("discord:", "") ? "disabled" : ""}
+        >
+          Delete
+        </button>
+      </div>
+    </article>
+  `).join("");
+}
+
+function resetUserForm() {
+  $("userForm").reset();
+  $("userEditId").value = "";
+  $("userActive").checked = true;
+  $("userRole").value = "employee";
+  $("userSaveButton").textContent = "Add User";
+  $("userCancelButton").classList.add("hidden");
+}
+
+function editUser(id) {
+  if (!isOwner()) {
+    showToast("Owner access is required.", true);
+    return;
+  }
+
+  const user = accessUsers.find((item) => item.id === id);
+  if (!user) return;
+
+  $("userEditId").value = user.id;
+  $("userDiscordId").value = user.discordId || user.id;
+  $("userDisplayName").value = user.displayName || "";
+  $("userRole").value = user.role || "viewer";
+  $("userActive").checked = user.active === true;
+  $("userSaveButton").textContent = "Save User";
+  $("userCancelButton").classList.remove("hidden");
+  $("userDisplayName").focus();
+}
+
+async function saveUser(event) {
+  event.preventDefault();
+
+  if (!isOwner()) {
+    showToast("Owner access is required.", true);
+    return;
+  }
+
+  const editId = $("userEditId").value.trim();
+  const discordId = $("userDiscordId").value.trim();
+  const displayName = $("userDisplayName").value.trim();
+  const role = $("userRole").value;
+  const active = $("userActive").checked;
+
+  if (!/^\\d{15,25}$/.test(discordId)) {
+    showToast("Enter a valid Discord User ID.", true);
+    return;
+  }
+
+  if (!displayName) {
+    showToast("Enter a display name.", true);
+    return;
+  }
+
+  const allowedRoles = ["owner", "admin", "manager", "employee", "viewer"];
+
+  if (!allowedRoles.includes(role)) {
+    showToast("Choose a valid role.", true);
+    return;
+  }
+
+  if (editId && editId !== discordId) {
+    showToast("Discord ID cannot be changed while editing. Delete and re-add the user instead.", true);
+    return;
+  }
+
+  try {
+    await setDoc(
+      doc(db, ACCESS_USERS_COLLECTION, discordId),
+      {
+        discordId,
+        displayName,
+        role,
+        active,
+        updatedAt: new Date().toISOString(),
+        updatedBy: getSession().discordName || "Owner"
+      },
+      { merge: true }
+    );
+
+    showToast(editId ? "User updated." : "User added.");
+    resetUserForm();
+  } catch (error) {
+    console.error(error);
+    showToast("The user could not be saved.", true);
+  }
+}
+
+async function deleteUser(id) {
+  if (!isOwner()) {
+    showToast("Owner access is required.", true);
+    return;
+  }
+
+  const currentDiscordId =
+    getSession().user?.uid?.replace("discord:", "");
+
+  if (id === currentDiscordId) {
+    showToast("You cannot delete your own Owner record.", true);
+    return;
+  }
+
+  const user = accessUsers.find((item) => item.id === id);
+  if (!user) return;
+
+  if (!window.confirm(`Remove access for ${user.displayName || user.discordId}?`)) {
+    return;
+  }
+
+  try {
+    await deleteDoc(doc(db, ACCESS_USERS_COLLECTION, id));
+    showToast("User access removed.");
+  } catch (error) {
+    console.error(error);
+    showToast("The user could not be deleted.", true);
+  }
+}
+
+
 export function bindAdminEvents() {
   $("brandingForm").addEventListener("submit", saveBranding);
   $("gangForm").addEventListener("submit", saveGang);
   $("gangCancelButton").addEventListener("click", resetGangForm);
+
+  $("userForm").addEventListener("submit", saveUser);
+  $("userCancelButton").addEventListener("click", resetUserForm);
 
   syncColorPicker("adminPrimaryColor", "adminPrimaryColorText");
   syncColorPicker("gangColor", "gangColorText");
@@ -244,10 +465,16 @@ export function bindAdminEvents() {
   document.addEventListener("click", (event) => {
     const editButton = event.target.closest("[data-gang-edit]");
     const deleteButton = event.target.closest("[data-gang-delete]");
+    const userEditButton = event.target.closest("[data-user-edit]");
+    const userDeleteButton = event.target.closest("[data-user-delete]");
 
     if (editButton) editGang(editButton.dataset.gangEdit);
     if (deleteButton) deleteGang(deleteButton.dataset.gangDelete);
+    if (userEditButton) editUser(userEditButton.dataset.userEdit);
+    if (userDeleteButton) deleteUser(userDeleteButton.dataset.userDelete);
   });
 
   resetGangForm();
+  resetUserForm();
+  startUsersListener();
 }

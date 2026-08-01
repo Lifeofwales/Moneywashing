@@ -4,15 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090d18">
-  <title>Money Washing Tracker</title>
-  <link rel="stylesheet" href="style.css?v=1">
+  <title>The Revenants Operations Center</title>
+  <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
   <section id="authGate" class="auth-gate">
     <div class="auth-card">
       <div class="auth-logo">$</div>
       <p class="eyebrow">SECURE ACCESS</p>
-      <h1>Money Washing Tracker</h1>
+      <h1>The Revenants Operations Center</h1>
       <p id="authStatus">Sign in with Discord to continue.</p>
       <button id="discordLoginButton" class="discord-button" type="button">
         Sign in with Discord
@@ -26,8 +26,8 @@
       <div class="brand">
         <div class="brand-mark">$</div>
         <div>
-          <h1 id="siteTitle">Money Washing Tracker</h1>
-          <p id="siteSubtitle">Shared transaction records</p>
+          <h1 id="siteTitle">The Revenants Operations Center</h1>
+          <p id="siteSubtitle">Secure Business & Gang Management</p>
         </div>
       </div>
 
@@ -70,7 +70,7 @@
     <main class="main-content">
       <header class="topbar">
         <div>
-          <p class="eyebrow">MONEYWASHING V2</p>
+          <p class="eyebrow">REVENANTS OPERATIONS</p>
           <h2 id="pageTitle">Dashboard</h2>
         </div>
         <button id="quickAddButton" class="primary-button">＋ New Entry</button>
@@ -222,9 +222,9 @@
       </section>
 
       <section id="adminView" class="view">
-        <div class="admin-warning">
-          <strong>Temporary open admin access</strong>
-          <p>Until Discord authentication is added, anyone with the website link can change these settings.</p>
+        <div class="admin-warning secured">
+          <strong>Secure role-based access</strong>
+          <p>Website and gang settings are limited to Owners and Administrators. User access and role management are restricted to the Owner.</p>
         </div>
 
         <div class="admin-grid">
@@ -300,12 +300,79 @@
             </form>
           </section>
         </div>
+
+
+        <section class="panel user-management-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">ACCESS CONTROL</p>
+              <h3>User Management</h3>
+            </div>
+          </div>
+
+          <div id="userList" class="user-admin-list"></div>
+
+          <form id="userForm" class="user-form">
+            <input id="userEditId" type="hidden">
+
+            <div class="form-grid">
+              <label>
+                Discord User ID
+                <input
+                  id="userDiscordId"
+                  type="text"
+                  inputmode="numeric"
+                  maxlength="25"
+                  placeholder="337084082439585804"
+                  required
+                >
+              </label>
+
+              <label>
+                Display Name
+                <input
+                  id="userDisplayName"
+                  type="text"
+                  maxlength="60"
+                  placeholder="LifeOfWales"
+                  required
+                >
+              </label>
+
+              <label>
+                Role
+                <select id="userRole" required>
+                  <option value="owner">Owner</option>
+                  <option value="admin">Administrator</option>
+                  <option value="manager">Manager</option>
+                  <option value="employee" selected>Employee</option>
+                  <option value="viewer">Viewer</option>
+                </select>
+              </label>
+
+              <label class="checkbox-label">
+                <input id="userActive" type="checkbox" checked>
+                <span>User is active and approved</span>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button id="userSaveButton" class="primary-button" type="submit">
+                Add User
+              </button>
+              <button id="userCancelButton" class="text-button hidden" type="button">
+                Cancel Edit
+              </button>
+            </div>
+          </form>
+        </section>
+
       </section>
     </main>
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="main.js?v=6"></script>
+  <script type="module" src="main.js?v=7"></script>
 </body>
 </html>

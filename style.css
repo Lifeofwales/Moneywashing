@@ -817,3 +817,165 @@ input[type="color"] {
   color: var(--muted);
   font-size: 11px;
 }
+
+
+.admin-warning.secured {
+  border-color: rgba(70, 211, 154, 0.34);
+  background: rgba(70, 211, 154, 0.08);
+}
+
+.admin-warning.secured strong {
+  color: var(--success);
+}
+
+.user-management-panel {
+  margin-top: 18px;
+}
+
+.user-admin-list {
+  display: grid;
+  gap: 12px;
+}
+
+.user-admin-item {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--surface-2);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-admin-main {
+  min-width: 0;
+}
+
+.user-admin-main strong,
+.user-admin-main small {
+  display: block;
+}
+
+.user-admin-main small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.role-badge,
+.status-badge {
+  width: fit-content;
+  padding: 6px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.role-owner {
+  color: #ffd76a;
+  background: rgba(255, 215, 106, 0.11);
+  border: 1px solid rgba(255, 215, 106, 0.35);
+}
+
+.role-admin {
+  color: #c4a8ff;
+  background: rgba(196, 168, 255, 0.11);
+  border: 1px solid rgba(196, 168, 255, 0.35);
+}
+
+.role-manager {
+  color: #69c8ff;
+  background: rgba(105, 200, 255, 0.11);
+  border: 1px solid rgba(105, 200, 255, 0.35);
+}
+
+.role-employee {
+  color: #67dda8;
+  background: rgba(103, 221, 168, 0.11);
+  border: 1px solid rgba(103, 221, 168, 0.35);
+}
+
+.role-viewer {
+  color: #aab3c5;
+  background: rgba(170, 179, 197, 0.1);
+  border: 1px solid rgba(170, 179, 197, 0.3);
+}
+
+.status-badge.active {
+  color: var(--success);
+  background: rgba(70, 211, 154, 0.1);
+  border: 1px solid rgba(70, 211, 154, 0.3);
+}
+
+.status-badge.disabled {
+  color: var(--danger);
+  background: rgba(255, 102, 119, 0.1);
+  border: 1px solid rgba(255, 102, 119, 0.3);
+}
+
+.user-admin-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.user-admin-actions button {
+  padding: 7px 9px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  background: #0b1020;
+}
+
+.user-admin-actions .danger-action {
+  color: var(--danger);
+}
+
+.user-admin-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.user-form {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.checkbox-label {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #0b1020;
+}
+
+.checkbox-label input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .user-admin-item {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .user-admin-actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .user-admin-item {
+    grid-template-columns: 1fr;
+  }
+
+  .user-admin-actions {
+    grid-column: auto;
+  }
+}
