@@ -11,6 +11,7 @@ import {
   serverTimestamp
 } from "./firebase.js";
 import { state, TRANSACTIONS_COLLECTION } from "./state.js";
+import { getSession } from "./auth.js";
 import {
   $,
   showView,
@@ -69,6 +70,13 @@ export async function saveEntry(event) {
     return;
   }
 
+  const session = getSession();
+
+  if (!session.user) {
+    showToast("Sign in before saving an entry.", true);
+    return;
+  }
+
   const entry = {
     group: $("group").value,
     buyer: $("buyer").value.trim(),
@@ -78,7 +86,11 @@ export async function saveEntry(event) {
     accountUsed: $("accountUsed").value.trim(),
     transactionDate: $("transactionDate").value,
     notes: $("notes").value.trim(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
+    updatedBy: {
+      uid: session.user.uid,
+      discordName: session.discordName
+    }
   };
 
   try {
@@ -88,7 +100,11 @@ export async function saveEntry(event) {
     } else {
       await addDoc(collection(db, TRANSACTIONS_COLLECTION), {
         ...entry,
-        createdAt: serverTimestamp()
+        createdAt: serverTimestamp(),
+        createdBy: {
+          uid: session.user.uid,
+          discordName: session.discordName
+        }
       });
       showToast("Entry saved.");
     }
@@ -220,6 +236,7 @@ function renderTable() {
       <td><span class="group-badge" style="--badge-color:${groupColor(record.group)}">${safeText(record.group)}</span></td>
       <td>
         <strong>${safeText(record.buyer)}</strong>
+        ${record.createdBy?.discordName ? `<small class="table-note">Added by ${safeText(record.createdBy.discordName)}</small>` : ""}
         ${record.notes ? `<small class="table-note">${safeText(record.notes)}</small>` : ""}
       </td>
       <td>${formatNumber(record.amount)}</td>
@@ -227,10 +244,12 @@ function renderTable() {
       <td><strong>${formatCurrency(record.total)}</strong></td>
       <td>${safeText(record.accountUsed || "—")}</td>
       <td>
-        <div class="table-actions">
-          <button data-edit-id="${record.id}">Edit</button>
-          <button class="danger-action" data-delete-id="${record.id}">Delete</button>
-        </div>
+        ${getSession().isAdmin ? `
+          <div class="table-actions">
+            <button data-edit-id="${record.id}">Edit</button>
+            <button class="danger-action" data-delete-id="${record.id}">Delete</button>
+          </div>
+        ` : '<span class="permission-note">Admin only</span>'}
       </td>
     </tr>
   `).join("");

@@ -8,7 +8,20 @@
   <link rel="stylesheet" href="style.css?v=1">
 </head>
 <body>
-  <div class="app-shell">
+  <section id="authGate" class="auth-gate">
+    <div class="auth-card">
+      <div class="auth-logo">$</div>
+      <p class="eyebrow">SECURE ACCESS</p>
+      <h1>Money Washing Tracker</h1>
+      <p id="authStatus">Sign in with Discord to continue.</p>
+      <button id="discordLoginButton" class="discord-button" type="button">
+        Sign in with Discord
+      </button>
+      <small>Only signed-in users can view shared records.</small>
+    </div>
+  </section>
+
+  <div id="protectedApp" class="app-shell hidden">
     <aside class="sidebar">
       <div class="brand">
         <div class="brand-mark">$</div>
@@ -28,10 +41,22 @@
         <button class="nav-item" data-view="records">
           <span>▤</span> All Records
         </button>
-        <button class="nav-item" data-view="admin">
+        <button id="adminNavButton" class="nav-item hidden" data-view="admin">
           <span>⚙</span> Admin Panel
         </button>
       </nav>
+
+      <div class="discord-user-card">
+        <div class="discord-avatar-wrap">
+          <img id="discordUserAvatar" class="discord-avatar hidden" alt="">
+          <span id="discordAvatarFallback" class="discord-avatar-fallback">?</span>
+        </div>
+        <div class="discord-user-text">
+          <strong id="discordUserName">Discord User</strong>
+          <small id="discordUserRole">Member</small>
+        </div>
+        <button id="logoutButton" class="logout-button" type="button">Log out</button>
+      </div>
 
       <div class="connection-card">
         <span id="connectionDot" class="connection-dot"></span>
@@ -281,6 +306,6 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="main.js?v=5"></script>
+  <script type="module" src="main.js?v=6"></script>
 </body>
 </html>

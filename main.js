@@ -1,30 +1,76 @@
-import { ensureSettingsDocument, startSettingsListener, bindAdminEvents } from "./admin.js";
+import {
+  ensureSettingsDocument,
+  startSettingsListener,
+  bindAdminEvents
+} from "./admin.js";
 import {
   startTransactionListener,
   bindTransactionEvents,
   resetTransactionForm
 } from "./transactions.js";
-import { $, showView, setConnection, showToast } from "./ui.js";
+import {
+  initializeAuthentication,
+  logout,
+  DISCORD_LOGIN_URL
+} from "./auth.js";
+import {
+  $,
+  showView,
+  setConnection,
+  showToast
+} from "./ui.js";
+
+let unsubscribeSettings = null;
+let unsubscribeTransactions = null;
+let appEventsBound = false;
 
 async function initialize() {
-  try {
-    setConnection("Connecting…", "Checking Firebase", false);
+  bindAuthenticationButtons();
 
-    bindNavigation();
-    bindTransactionEvents();
-    bindAdminEvents();
+  await initializeAuthentication(async (session) => {
+    if (!session.user) {
+      stopLiveListeners();
+      setConnection("Signed out", "Discord login required", false);
+      return;
+    }
 
-    await ensureSettingsDocument();
-    startSettingsListener();
-    startTransactionListener();
+    try {
+      setConnection("Connecting…", "Checking Firebase", false);
 
-    resetTransactionForm();
-    setConnection("Shared database", "Live updates enabled", true);
-  } catch (error) {
-    console.error(error);
-    setConnection("Database error", "Check Firebase rules and configuration", false);
-    showToast("The website could not connect to Firebase.", true);
-  }
+      if (!appEventsBound) {
+        bindNavigation();
+        bindTransactionEvents();
+        bindAdminEvents();
+        appEventsBound = true;
+      }
+
+      await ensureSettingsDocument();
+
+      stopLiveListeners();
+      unsubscribeSettings = startSettingsListener();
+      unsubscribeTransactions = startTransactionListener();
+
+      resetTransactionForm();
+      showView("dashboard");
+      setConnection("Shared database", "Discord authenticated", true);
+    } catch (error) {
+      console.error(error);
+      setConnection(
+        "Database error",
+        "Check authentication and Firestore rules",
+        false
+      );
+      showToast("The website could not connect to Firebase.", true);
+    }
+  });
+}
+
+function bindAuthenticationButtons() {
+  $("discordLoginButton").addEventListener("click", () => {
+    window.location.href = DISCORD_LOGIN_URL;
+  });
+
+  $("logoutButton").addEventListener("click", logout);
 }
 
 function bindNavigation() {
@@ -40,6 +86,18 @@ function bindNavigation() {
     resetTransactionForm();
     showView("new-entry");
   });
+}
+
+function stopLiveListeners() {
+  if (typeof unsubscribeSettings === "function") {
+    unsubscribeSettings();
+    unsubscribeSettings = null;
+  }
+
+  if (typeof unsubscribeTransactions === "function") {
+    unsubscribeTransactions();
+    unsubscribeTransactions = null;
+  }
 }
 
 initialize();

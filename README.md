@@ -1,38 +1,37 @@
-# Moneywashing V2 — Flat GitHub Version
+# Moneywashing V2 with Discord Authentication
 
-Every file in this folder belongs in the root of the GitHub repository.
-There are no subfolders.
+Flat GitHub Pages package. Upload every file to the repository root.
+
+## Before upload
+
+In Firebase Authentication:
+
+1. Open Authentication.
+2. Click Get started if needed.
+3. Open Settings → Authorized domains.
+4. Add `lifeofwales.github.io`.
 
 ## Upload
 
-1. Open the Moneywashing repository on GitHub.
-2. Delete the current website files, or upload these files and replace matching files.
-3. Click Add file → Upload files.
-4. Drag every file from this extracted folder into the upload area.
-5. Confirm GitHub lists these exact root files:
-   - index.html
-   - style.css
-   - firebase-config.js
-   - firestore.rules
-   - main.js
-   - admin.js
-   - firebase.js
-   - state.js
-   - transactions.js
-   - ui.js
-6. Commit directly to the main branch.
-7. Wait for GitHub Pages deployment.
-8. Open https://lifeofwales.github.io/Moneywashing/?v=5
-9. Press Ctrl + Shift + R.
+Upload all files in this folder to the root of the Moneywashing repository.
+Replace the current matching files and commit to `main`.
 
-## Firebase
+Then open:
 
-The package uses the existing Moneywashing Firebase configuration and reads the
-existing rp_transactions collection.
+https://lifeofwales.github.io/Moneywashing/?v=6
 
-Firestore rules must allow both:
-- rp_transactions
-- app_settings
+Press Ctrl + Shift + R.
 
-The included firestore.rules file contains the temporary rules needed before
-Discord authentication is added.
+## Rules
+
+Publish the included `firestore.rules` after the website files are deployed.
+
+The rules require:
+- Discord/Firebase authentication to read and create records
+- An `admin: true` token claim to edit/delete records or manage settings
+
+## Admin claim
+
+After adding your Discord ID to `ADMIN_DISCORD_IDS` in Cloudflare,
+log out and sign in again. A previously issued token does not gain the
+new admin claim automatically.

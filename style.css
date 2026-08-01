@@ -692,3 +692,128 @@ input[type="color"] {
     grid-column: 1 / -1;
   }
 }
+
+
+.auth-gate {
+  min-height: 100vh;
+  padding: 24px;
+  display: grid;
+  place-items: center;
+}
+
+.auth-card {
+  width: min(430px, 100%);
+  padding: 34px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: rgba(16, 22, 37, 0.96);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.auth-logo {
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  color: #07101d;
+  background: var(--primary);
+  font-size: 32px;
+  font-weight: 900;
+}
+
+.auth-card h1 {
+  margin: 8px 0;
+}
+
+.auth-card p:not(.eyebrow),
+.auth-card small {
+  color: var(--muted);
+}
+
+.auth-card small {
+  display: block;
+  margin-top: 14px;
+}
+
+.discord-button {
+  width: 100%;
+  margin-top: 18px;
+  padding: 13px 16px;
+  border: 0;
+  border-radius: 11px;
+  color: #fff;
+  background: #5865f2;
+  font-weight: 900;
+}
+
+.discord-user-card {
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.discord-avatar-wrap,
+.discord-avatar,
+.discord-avatar-fallback {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.discord-avatar {
+  display: block;
+  object-fit: cover;
+}
+
+.discord-avatar-fallback {
+  display: grid;
+  place-items: center;
+  color: #07101d;
+  background: var(--primary);
+  font-weight: 900;
+}
+
+.discord-user-text {
+  min-width: 0;
+}
+
+.discord-user-text strong,
+.discord-user-text small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.discord-user-text strong {
+  font-size: 12px;
+}
+
+.discord-user-text small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.logout-button {
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  background: transparent;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.permission-note {
+  color: var(--muted);
+  font-size: 11px;
+}

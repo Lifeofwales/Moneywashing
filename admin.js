@@ -23,6 +23,7 @@ import {
   safeText
 } from "./ui.js";
 import { renderAll, resetTransactionForm } from "./transactions.js";
+import { getSession } from "./auth.js";
 
 function settingsReference() {
   return doc(db, SETTINGS_COLLECTION, SETTINGS_DOCUMENT);
@@ -62,6 +63,11 @@ export function startSettingsListener() {
 }
 
 async function saveSettings(nextSettings, successMessage) {
+  if (!getSession().isAdmin) {
+    showToast("Administrator access is required.", true);
+    return;
+  }
+
   try {
     const normalized = normalizeSettings(nextSettings);
     await setDoc(settingsReference(), {

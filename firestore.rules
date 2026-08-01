@@ -3,15 +3,24 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Temporary open access for the transaction tracker.
-    // Replace these rules after Discord/Firebase Authentication is added.
-    match /rp_transactions/{recordId} {
-      allow read, create, update, delete: if true;
+    function signedIn() {
+      return request.auth != null;
     }
 
-    // Temporary open access for V2 website and gang settings.
+    function isAdmin() {
+      return signedIn() && request.auth.token.admin == true;
+    }
+
+    match /rp_transactions/{recordId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.createdBy.uid == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
     match /app_settings/{settingId} {
-      allow read, create, update, delete: if true;
+      allow read: if signedIn();
+      allow create, update, delete: if isAdmin();
     }
   }
 }
