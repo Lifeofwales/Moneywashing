@@ -14,7 +14,10 @@ const ROLE_PERMISSIONS = {
     viewOperations: true,
     manageOperations: true,
     contributeNotes: true,
-    updateAssignedTasks: true
+    updateAssignedTasks: true,
+    viewInventory: true,
+    manageInventory: true,
+    adjustInventory: true
   },
   admin: {
     view: true,
@@ -29,7 +32,10 @@ const ROLE_PERMISSIONS = {
     viewOperations: true,
     manageOperations: true,
     contributeNotes: true,
-    updateAssignedTasks: true
+    updateAssignedTasks: true,
+    viewInventory: true,
+    manageInventory: true,
+    adjustInventory: true
   },
   manager: {
     view: true,
@@ -44,7 +50,10 @@ const ROLE_PERMISSIONS = {
     viewOperations: true,
     manageOperations: true,
     contributeNotes: true,
-    updateAssignedTasks: true
+    updateAssignedTasks: true,
+    viewInventory: true,
+    manageInventory: true,
+    adjustInventory: true
   },
   employee: {
     view: true,
@@ -59,7 +68,10 @@ const ROLE_PERMISSIONS = {
     viewOperations: true,
     manageOperations: false,
     contributeNotes: true,
-    updateAssignedTasks: true
+    updateAssignedTasks: true,
+    viewInventory: true,
+    manageInventory: false,
+    adjustInventory: true
   },
   viewer: {
     view: true,
@@ -74,7 +86,10 @@ const ROLE_PERMISSIONS = {
     viewOperations: true,
     manageOperations: false,
     contributeNotes: false,
-    updateAssignedTasks: false
+    updateAssignedTasks: false,
+    viewInventory: true,
+    manageInventory: false,
+    adjustInventory: false
   }
 };
 

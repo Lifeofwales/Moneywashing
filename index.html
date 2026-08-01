@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090d18">
   <title>The Revenants Operations Center</title>
-  <link rel="stylesheet" href="style.css?v=19">
+  <link rel="stylesheet" href="style.css?v=20">
 </head>
 <body>
   <section id="authGate" class="auth-gate">
@@ -49,6 +49,9 @@
         </button>
         <button id="operationsNavButton" class="nav-item hidden" data-view="operations">
           <span>🏠</span> Operations Hub
+        </button>
+        <button id="inventoryNavButton" class="nav-item hidden" data-view="inventory">
+          <span>📦</span> Inventory Center
         </button>
         <button id="adminNavButton" class="nav-item hidden" data-view="admin">
           <span>⚙</span> Admin Panel
@@ -638,6 +641,195 @@
         </div>
       </section>
 
+
+      <section id="inventoryView" class="view">
+        <div class="inventory-stats-grid">
+          <article class="leaderboard-card">
+            <span>Inventory Items</span>
+            <strong id="inventoryTotalItems">0</strong>
+            <small>Tracked item records</small>
+          </article>
+          <article class="leaderboard-card">
+            <span>Total Quantity</span>
+            <strong id="inventoryTotalQuantity">0</strong>
+            <small>Combined stock count</small>
+          </article>
+          <article class="leaderboard-card">
+            <span>Low Stock</span>
+            <strong id="inventoryLowStockCount">0</strong>
+            <small>Items at or below threshold</small>
+          </article>
+          <article class="leaderboard-card">
+            <span>Locations</span>
+            <strong id="inventoryLocationCount">0</strong>
+            <small>Storage areas in use</small>
+          </article>
+        </div>
+
+        <section class="panel inventory-control-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">STOCK CONTROL</p>
+              <h3>Inventory Center</h3>
+            </div>
+            <span id="inventoryResultCount" class="audit-result-count">
+              0 items
+            </span>
+          </div>
+
+          <div class="inventory-filters">
+            <input
+              id="inventorySearch"
+              type="search"
+              placeholder="Search item, SKU, category, or location"
+            >
+
+            <select id="inventoryCategoryFilter">
+              <option value="all">All categories</option>
+            </select>
+
+            <select id="inventoryLocationFilter">
+              <option value="all">All locations</option>
+            </select>
+
+            <select id="inventoryStockFilter">
+              <option value="all">All stock levels</option>
+              <option value="low">Low stock only</option>
+              <option value="in-stock">In stock</option>
+            </select>
+          </div>
+
+          <form id="inventoryItemForm" class="inventory-item-form">
+            <input id="inventoryItemId" type="hidden">
+
+            <div class="form-grid">
+              <label>
+                Item Name
+                <input
+                  id="inventoryItemName"
+                  type="text"
+                  maxlength="100"
+                  placeholder="Item name"
+                  required
+                >
+              </label>
+
+              <label>
+                SKU / Reference
+                <input
+                  id="inventoryItemSku"
+                  type="text"
+                  maxlength="60"
+                  placeholder="Optional SKU"
+                >
+              </label>
+
+              <label>
+                Category
+                <input
+                  id="inventoryItemCategory"
+                  type="text"
+                  maxlength="60"
+                  placeholder="Supplies"
+                  required
+                >
+              </label>
+
+              <label>
+                Storage Location
+                <input
+                  id="inventoryItemLocation"
+                  type="text"
+                  maxlength="100"
+                  placeholder="Warehouse A"
+                  required
+                >
+              </label>
+
+              <label>
+                Starting Quantity
+                <input
+                  id="inventoryItemQuantity"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value="0"
+                  required
+                >
+              </label>
+
+              <label>
+                Low Stock Threshold
+                <input
+                  id="inventoryLowStockThreshold"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value="5"
+                  required
+                >
+              </label>
+
+              <label>
+                Unit Label
+                <input
+                  id="inventoryItemUnit"
+                  type="text"
+                  maxlength="30"
+                  value="units"
+                  placeholder="units"
+                >
+              </label>
+
+              <label class="full-width">
+                Description
+                <textarea
+                  id="inventoryItemDescription"
+                  rows="3"
+                  maxlength="600"
+                  placeholder="Item notes or description"
+                ></textarea>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button
+                id="inventoryItemSaveButton"
+                class="primary-button"
+                type="submit"
+              >
+                Add Item
+              </button>
+
+              <button
+                id="inventoryCancelEditButton"
+                class="text-button hidden"
+                type="button"
+              >
+                Cancel Edit
+              </button>
+            </div>
+          </form>
+
+          <div id="inventoryItemList" class="inventory-item-list"></div>
+        </section>
+
+        <section class="panel inventory-history-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">STOCK HISTORY</p>
+              <h3>Inventory Activity</h3>
+            </div>
+
+            <select id="inventoryHistoryItemFilter">
+              <option value="all">All inventory items</option>
+            </select>
+          </div>
+
+          <div id="inventoryHistoryList" class="inventory-history-list"></div>
+        </section>
+      </section>
+
       <section id="adminView" class="view">
         <div class="admin-warning secured">
           <strong>Secure role-based access</strong>
@@ -790,6 +982,6 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="main.js?v=19"></script>
+  <script type="module" src="main.js?v=20"></script>
 </body>
 </html>

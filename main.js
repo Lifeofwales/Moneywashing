@@ -44,6 +44,12 @@ import {
   startOperationsListeners,
   stopOperationsListeners
 } from "./operations.js";
+import {
+  bindInventoryEvents,
+  applyInventoryPermissions,
+  startInventoryListeners,
+  stopInventoryListeners
+} from "./inventory.js";
 
 let unsubscribeSettings = null;
 let unsubscribeTransactions = null;
@@ -58,6 +64,7 @@ async function initialize() {
       stopActiveUsersListener();
       stopAuditLogs();
       stopOperationsListeners();
+      stopInventoryListeners();
       stopLiveListeners();
       setConnection("Signed out", "Discord login required", false);
       return;
@@ -73,6 +80,7 @@ async function initialize() {
         bindAuditEvents();
         bindAnalyticsEvents();
         bindOperationsEvents();
+        bindInventoryEvents();
         appEventsBound = true;
       }
 
@@ -82,11 +90,13 @@ async function initialize() {
       applyAuditPermissions();
       applyAnalyticsPermissions();
       applyOperationsPermissions();
+      applyInventoryPermissions();
 
       await startPresence(session);
       startActiveUsersListener();
       startAuditListener();
       startOperationsListeners();
+      startInventoryListeners();
 
       await ensureSettingsDocument();
 
