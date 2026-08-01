@@ -14,11 +14,13 @@ import {
   normalizeHex,
   slugify,
   SETTINGS_COLLECTION,
-  SETTINGS_DOCUMENT
+  SETTINGS_DOCUMENT,
+  DEFAULT_NAVIGATION_ORDER
 } from "./state.js";
 import {
   $,
   applyBranding,
+  applyNavigationOrder,
   refreshGangOptions,
   showToast,
   formatCurrency,
@@ -32,6 +34,23 @@ import { writeAuditLog } from "./audit.js";
 const ACCESS_USERS_COLLECTION = "access_users";
 let accessUsers = [];
 let stopUsersListener = null;
+
+const NAVIGATION_LABELS = {
+  dashboard: "⌂ Dashboard",
+  intro: "❔ Start Here",
+  "new-entry": "＋ New Entry",
+  records: "▤ All Records",
+  audit: "📜 Audit Center",
+  analytics: "🧠 Intelligence Center",
+  operations: "🏠 Operations Hub",
+  inventory: "📦 Inventory Center",
+  "successful-runs": "🏁 Successful Runs",
+  "discord-integration": "🔗 Discord Integration",
+  admin: "⚙ Admin Panel"
+};
+
+let navigationDraft = [...DEFAULT_NAVIGATION_ORDER];
+let draggedNavigationItem = null;
 
 function settingsReference() {
   return doc(db, SETTINGS_COLLECTION, SETTINGS_DOCUMENT);
@@ -55,10 +74,13 @@ export function startSettingsListener() {
     if (!snapshot.exists()) return;
 
     state.settings = normalizeSettings(snapshot.data());
+    navigationDraft = [...state.settings.navigationOrder];
     applyBranding();
+    applyNavigationOrder();
     refreshGangOptions();
     populateBrandingForm();
     renderGangList();
+    renderNavigationLayoutManager();
     renderAll();
 
     if (!state.editingRecordId) {
@@ -303,6 +325,207 @@ function syncColorPicker(pickerId, textId) {
 
 
 
+
+function renderNavigationLayoutManager() {
+  const container = $("navigationLayoutList");
+  if (!container) return;
+
+  if (!isOwner()) {
+    container.innerHTML =
+      '<div class="empty-state">Only the Owner can change the shared sidebar layout.</div>';
+    return;
+  }
+
+  const order = navigationDraft.length
+    ? navigationDraft
+    : [...DEFAULT_NAVIGATION_ORDER];
+
+  container.innerHTML = order.map((viewName, index) => {
+    const locked = viewName === "dashboard";
+
+    return `
+      <article
+        class="navigation-layout-item ${locked ? "locked" : ""}"
+        draggable="${locked ? "false" : "true"}"
+        data-navigation-item="${viewName}"
+      >
+        <span class="navigation-drag-handle">
+          ${locked ? "🔒" : "☰"}
+        </span>
+
+        <div class="navigation-layout-main">
+          <strong>${safeText(NAVIGATION_LABELS[viewName] || viewName)}</strong>
+          <small>
+            ${locked
+              ? "Dashboard is locked at the top."
+              : "Drag this row or use the arrow buttons."}
+          </small>
+        </div>
+
+        <div class="navigation-layout-actions">
+          <button
+            type="button"
+            data-navigation-up="${viewName}"
+            ${locked || index <= 1 ? "disabled" : ""}
+            aria-label="Move up"
+          >
+            ↑
+          </button>
+
+          <button
+            type="button"
+            data-navigation-down="${viewName}"
+            ${locked || index === order.length - 1 ? "disabled" : ""}
+            aria-label="Move down"
+          >
+            ↓
+          </button>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+function moveNavigationItem(viewName, direction) {
+  if (!isOwner() || viewName === "dashboard") return;
+
+  const currentIndex = navigationDraft.indexOf(viewName);
+  if (currentIndex < 0) return;
+
+  const targetIndex = currentIndex + direction;
+
+  if (
+    targetIndex < 1 ||
+    targetIndex >= navigationDraft.length
+  ) {
+    return;
+  }
+
+  const next = [...navigationDraft];
+  [next[currentIndex], next[targetIndex]] =
+    [next[targetIndex], next[currentIndex]];
+
+  navigationDraft = next;
+  renderNavigationLayoutManager();
+  previewNavigationLayout();
+}
+
+function previewNavigationLayout() {
+  const previous = state.settings.navigationOrder;
+  state.settings.navigationOrder = [...navigationDraft];
+  applyNavigationOrder();
+  state.settings.navigationOrder = previous;
+}
+
+async function saveNavigationLayout() {
+  if (!isOwner()) {
+    showToast("Owner access is required.", true);
+    return;
+  }
+
+  const previousOrder = [...state.settings.navigationOrder];
+
+  await saveSettings(
+    {
+      ...state.settings,
+      navigationOrder: [...navigationDraft]
+    },
+    "Sidebar layout saved for everyone."
+  );
+
+  await writeAuditLog({
+    action: "Sidebar Layout Updated",
+    category: "settings",
+    severity: "action",
+    targetType: "settings",
+    targetId: SETTINGS_DOCUMENT,
+    targetName: "Sidebar Layout",
+    summary: `${getSession().discordName} updated the shared sidebar order.`,
+    details: {
+      before: previousOrder,
+      after: navigationDraft
+    }
+  });
+}
+
+function resetNavigationLayout() {
+  if (!isOwner()) return;
+
+  navigationDraft = [...DEFAULT_NAVIGATION_ORDER];
+  renderNavigationLayoutManager();
+  previewNavigationLayout();
+  showToast("Default order restored in preview. Click Save Layout to publish it.");
+}
+
+function handleNavigationDragStart(event) {
+  const item = event.target.closest("[data-navigation-item]");
+  if (!item || item.dataset.navigationItem === "dashboard") return;
+
+  draggedNavigationItem = item.dataset.navigationItem;
+  item.classList.add("dragging");
+
+  event.dataTransfer.effectAllowed = "move";
+  event.dataTransfer.setData("text/plain", draggedNavigationItem);
+}
+
+function handleNavigationDragOver(event) {
+  const target = event.target.closest("[data-navigation-item]");
+  if (
+    !target ||
+    target.dataset.navigationItem === "dashboard" ||
+    !draggedNavigationItem
+  ) {
+    return;
+  }
+
+  event.preventDefault();
+  event.dataTransfer.dropEffect = "move";
+  target.classList.add("drag-over");
+}
+
+function handleNavigationDragLeave(event) {
+  event.target
+    .closest("[data-navigation-item]")
+    ?.classList.remove("drag-over");
+}
+
+function handleNavigationDrop(event) {
+  const target = event.target.closest("[data-navigation-item]");
+  if (
+    !target ||
+    target.dataset.navigationItem === "dashboard" ||
+    !draggedNavigationItem
+  ) {
+    return;
+  }
+
+  event.preventDefault();
+
+  const targetName = target.dataset.navigationItem;
+  const next = navigationDraft.filter(
+    (item) => item !== draggedNavigationItem
+  );
+
+  const targetIndex = next.indexOf(targetName);
+  next.splice(targetIndex, 0, draggedNavigationItem);
+
+  navigationDraft = next;
+  draggedNavigationItem = null;
+
+  renderNavigationLayoutManager();
+  previewNavigationLayout();
+}
+
+function handleNavigationDragEnd(event) {
+  draggedNavigationItem = null;
+
+  document
+    .querySelectorAll(".navigation-layout-item")
+    .forEach((item) => {
+      item.classList.remove("dragging", "drag-over");
+    });
+}
+
 export function applyAdminPermissions() {
   const manageSettings = can("manageSettings");
   const manageGangs = can("manageGangs");
@@ -311,6 +534,7 @@ export function applyAdminPermissions() {
   $("brandingForm")?.classList.toggle("permission-locked", !manageSettings);
   $("gangForm")?.classList.toggle("permission-locked", !manageGangs);
   $("userManagementPanel")?.classList.toggle("hidden", !manageUsers);
+  $("navigationLayoutPanel")?.classList.toggle("hidden", !isOwner());
 
   $("brandingForm")
     ?.querySelectorAll("input, select, textarea, button")
@@ -575,6 +799,41 @@ export function bindAdminEvents() {
   $("userForm").addEventListener("submit", saveUser);
   $("userCancelButton").addEventListener("click", resetUserForm);
 
+  $("saveNavigationLayoutButton")?.addEventListener(
+    "click",
+    saveNavigationLayout
+  );
+
+  $("resetNavigationLayoutButton")?.addEventListener(
+    "click",
+    resetNavigationLayout
+  );
+
+  $("navigationLayoutList")?.addEventListener(
+    "dragstart",
+    handleNavigationDragStart
+  );
+
+  $("navigationLayoutList")?.addEventListener(
+    "dragover",
+    handleNavigationDragOver
+  );
+
+  $("navigationLayoutList")?.addEventListener(
+    "dragleave",
+    handleNavigationDragLeave
+  );
+
+  $("navigationLayoutList")?.addEventListener(
+    "drop",
+    handleNavigationDrop
+  );
+
+  $("navigationLayoutList")?.addEventListener(
+    "dragend",
+    handleNavigationDragEnd
+  );
+
   syncColorPicker("adminPrimaryColor", "adminPrimaryColorText");
   syncColorPicker("gangColor", "gangColorText");
 
@@ -583,15 +842,35 @@ export function bindAdminEvents() {
     const deleteButton = event.target.closest("[data-gang-delete]");
     const userEditButton = event.target.closest("[data-user-edit]");
     const userDeleteButton = event.target.closest("[data-user-delete]");
+    const navigationUpButton = event.target.closest("[data-navigation-up]");
+    const navigationDownButton = event.target.closest("[data-navigation-down]");
 
     if (editButton) editGang(editButton.dataset.gangEdit);
     if (deleteButton) deleteGang(deleteButton.dataset.gangDelete);
     if (userEditButton) editUser(userEditButton.dataset.userEdit);
     if (userDeleteButton) deleteUser(userDeleteButton.dataset.userDelete);
+
+    if (navigationUpButton) {
+      moveNavigationItem(
+        navigationUpButton.dataset.navigationUp,
+        -1
+      );
+    }
+
+    if (navigationDownButton) {
+      moveNavigationItem(
+        navigationDownButton.dataset.navigationDown,
+        1
+      );
+    }
   });
 
   resetGangForm();
   resetUserForm();
+  navigationDraft = [
+    ...(state.settings.navigationOrder || DEFAULT_NAVIGATION_ORDER)
+  ];
+  renderNavigationLayoutManager();
   startUsersListener();
   applyAdminPermissions();
 }

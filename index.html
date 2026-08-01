@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090d18">
   <title>The Revenants Operations Center</title>
-  <link rel="stylesheet" href="style.css?v=21">
+  <link rel="stylesheet" href="style.css?v=22">
 </head>
 <body>
   <section id="authGate" class="auth-gate">
@@ -34,6 +34,9 @@
       <nav class="nav-list" aria-label="Main navigation">
         <button class="nav-item active" data-view="dashboard">
           <span>⌂</span> Dashboard
+        </button>
+        <button id="introNavButton" class="nav-item" data-view="intro">
+          <span>❔</span> Start Here
         </button>
         <button id="newEntryNavButton" class="nav-item" data-view="new-entry">
           <span>＋</span> New Entry
@@ -104,6 +107,113 @@
         </div>
         <button id="quickAddButton" class="primary-button">＋ New Entry</button>
       </header>
+
+
+      <section id="introView" class="view">
+        <section class="panel intro-hero">
+          <p class="eyebrow">WELCOME</p>
+          <h3>Start Here</h3>
+          <p>
+            The Revenants Operations Center keeps transactions, successful
+            runs, team coordination, inventory, reporting, and administration
+            in one secure place. The sections visible to you depend on your
+            assigned role.
+          </p>
+        </section>
+
+        <div class="intro-grid">
+          <article class="intro-card">
+            <span>⌂</span>
+            <div>
+              <h4>Dashboard</h4>
+              <p>Shows the main totals, recent entries, gang breakdowns, and recent activity.</p>
+            </div>
+          </article>
+
+          <article class="intro-card">
+            <span>＋</span>
+            <div>
+              <h4>New Entry</h4>
+              <p>Creates a new money-washing transaction record and sends it to the connected Discord records channel.</p>
+            </div>
+          </article>
+
+          <article class="intro-card">
+            <span>▤</span>
+            <div>
+              <h4>All Records</h4>
+              <p>Searches and reviews every saved transaction. Authorized roles can edit or delete records.</p>
+            </div>
+          </article>
+
+          <article class="intro-card">
+            <span>🏁</span>
+            <div>
+              <h4>Successful Runs</h4>
+              <p>Records completed Liquor or Meat runs, including washer, rolls, mistakes, cut, and ending total.</p>
+            </div>
+          </article>
+
+          <article class="intro-card">
+            <span>🏠</span>
+            <div>
+              <h4>Operations Hub</h4>
+              <p>Contains announcements, tasks, objectives, shared notes, and scheduled events for the team.</p>
+            </div>
+          </article>
+
+          <article class="intro-card">
+            <span>📦</span>
+            <div>
+              <h4>Inventory Center</h4>
+              <p>Tracks stock quantities, categories, locations, low-stock warnings, and adjustment history.</p>
+            </div>
+          </article>
+
+          <article class="intro-card">
+            <span>🧠</span>
+            <div>
+              <h4>Intelligence Center</h4>
+              <p>Provides revenue analytics, charts, employee and gang rankings, date filters, and CSV exports.</p>
+            </div>
+          </article>
+
+          <article class="intro-card">
+            <span>📜</span>
+            <div>
+              <h4>Audit Center</h4>
+              <p>Shows a permanent activity history for important actions, changes, deletions, and security events.</p>
+            </div>
+          </article>
+
+          <article class="intro-card">
+            <span>🔗</span>
+            <div>
+              <h4>Discord Integration</h4>
+              <p>Owner controls for testing the secure Cloudflare Worker and viewing the configured Discord routes.</p>
+            </div>
+          </article>
+
+          <article class="intro-card">
+            <span>⚙</span>
+            <div>
+              <h4>Admin Panel</h4>
+              <p>Controls branding, gang pricing, approved users, roles, and the shared sidebar order.</p>
+            </div>
+          </article>
+        </div>
+
+        <section class="panel intro-permissions">
+          <p class="eyebrow">ROLE ACCESS</p>
+          <h3>Why some tabs may be hidden</h3>
+          <p>
+            Owners and Administrators have the broadest controls. Managers
+            oversee operations and records. Employees can submit assigned work,
+            transactions, runs, notes, and inventory adjustments. Viewers have
+            read-only access to approved sections.
+          </p>
+        </section>
+      </section>
 
       <section id="dashboardView" class="view active">
         <div class="stats-grid">
@@ -979,6 +1089,42 @@
         </div>
 
 
+
+        <section id="navigationLayoutPanel" class="panel navigation-layout-panel hidden">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">OWNER LAYOUT</p>
+              <h3>Sidebar Layout Manager</h3>
+            </div>
+          </div>
+
+          <p class="navigation-layout-help">
+            Drag tabs into the preferred order or use the arrow buttons.
+            Dashboard stays locked at the top. Saving publishes the order to
+            every user while role-restricted tabs remain hidden normally.
+          </p>
+
+          <div id="navigationLayoutList" class="navigation-layout-list"></div>
+
+          <div class="form-actions">
+            <button
+              id="saveNavigationLayoutButton"
+              class="primary-button"
+              type="button"
+            >
+              Save Layout
+            </button>
+
+            <button
+              id="resetNavigationLayoutButton"
+              class="secondary-button"
+              type="button"
+            >
+              Reset Default Order
+            </button>
+          </div>
+        </section>
+
         <section id="userManagementPanel" class="panel user-management-panel">
           <div class="panel-heading">
             <div>
@@ -1050,6 +1196,6 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="main.js?v=21"></script>
+  <script type="module" src="main.js?v=22"></script>
 </body>
 </html>

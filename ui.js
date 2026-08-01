@@ -4,6 +4,7 @@ export const $ = (id) => document.getElementById(id);
 
 const views = {
   dashboard: $("dashboardView"),
+  intro: $("introView"),
   "new-entry": $("newEntryView"),
   records: $("recordsView"),
   audit: $("auditView"),
@@ -24,6 +25,7 @@ export function showView(name) {
 
   const labels = {
     dashboard: "Dashboard",
+    intro: "Start Here",
     "new-entry": "New Entry",
     records: "All Records",
     audit: "Audit Center",
@@ -82,6 +84,25 @@ function hexToRgb(hex) {
   const clean = String(hex).replace("#", "");
   const number = Number.parseInt(clean, 16);
   return `${(number >> 16) & 255}, ${(number >> 8) & 255}, ${number & 255}`;
+}
+
+export function applyNavigationOrder() {
+  const navigation = document.querySelector(".nav-list");
+  if (!navigation) return;
+
+  const order = Array.isArray(state.settings.navigationOrder)
+    ? state.settings.navigationOrder
+    : [];
+
+  order.forEach((viewName) => {
+    const button = navigation.querySelector(
+      `[data-view="${viewName}"]`
+    );
+
+    if (button) {
+      navigation.appendChild(button);
+    }
+  });
 }
 
 export function applyBranding() {
