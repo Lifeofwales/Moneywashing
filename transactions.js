@@ -302,10 +302,20 @@ function renderStats() {
   }, {});
   const topGang = Object.entries(gangTotals).sort((a, b) => b[1] - a[1])[0]?.[0] || "—";
 
-  $("totalAmount").textContent = formatNumber(totalAmount);
-  $("totalValue").textContent = formatCurrency(totalValue);
-  $("transactionCount").textContent = state.records.length;
-  $("topGroup").textContent = topGang;
+  const legacyDashboardValues = {
+    totalAmount: formatNumber(totalAmount),
+    totalValue: formatCurrency(totalValue),
+    transactionCount: state.records.length,
+    topGroup: topGang
+  };
+
+  Object.entries(legacyDashboardValues).forEach(([id, value]) => {
+    const element = $(id);
+
+    if (element) {
+      element.textContent = value;
+    }
+  });
 }
 
 function renderGroupBreakdown() {
