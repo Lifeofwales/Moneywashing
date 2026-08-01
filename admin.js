@@ -376,7 +376,7 @@ const discordId = rawDiscordId.replace(/\D/g, "");
 
 const displayName = $("userDisplayName").value.trim();
 const role = $("userRole").value;
-const active = $("userActive").checked();
+const active = $("userActive").checked;
 
 // Put the cleaned value back into the textbox
 $("userDiscordId").value = discordId;
