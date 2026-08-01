@@ -13,6 +13,7 @@ import {
 import { state, TRANSACTIONS_COLLECTION } from "./state.js";
 import { getSession } from "./auth.js";
 import { transactionPermissions } from "./permissions.js";
+import { writeAuditLog } from "./audit.js";
 import {
   $,
   showView,
@@ -127,17 +128,59 @@ export async function saveEntry(event) {
 
   try {
     if (state.editingRecordId) {
-      await updateDoc(doc(db, TRANSACTIONS_COLLECTION, state.editingRecordId), entry);
-      showToast("Entry updated.");
-    } else {
-      await addDoc(collection(db, TRANSACTIONS_COLLECTION), {
-        ...entry,
-        createdAt: serverTimestamp(),
-        createdBy: {
-          uid: session.user.uid,
-          discordName: session.discordName
+      const previousRecord = state.records.find(
+        (item) => item.id === state.editingRecordId
+      );
+
+      await updateDoc(
+        doc(db, TRANSACTIONS_COLLECTION, state.editingRecordId),
+        entry
+      );
+
+      await writeAuditLog({
+        action: "Transaction Updated",
+        category: "transaction",
+        severity: "action",
+        targetType: "transaction",
+        targetId: state.editingRecordId,
+        targetName: entry.buyer,
+        summary: `${session.discordName} updated a ${entry.group} transaction for ${entry.buyer}.`,
+        details: {
+          before: previousRecord || null,
+          after: entry
         }
       });
+
+      showToast("Entry updated.");
+    } else {
+      const createdReference = await addDoc(
+        collection(db, TRANSACTIONS_COLLECTION),
+        {
+          ...entry,
+          createdAt: serverTimestamp(),
+          createdBy: {
+            uid: session.user.uid,
+            discordName: session.discordName
+          }
+        }
+      );
+
+      await writeAuditLog({
+        action: "Transaction Created",
+        category: "transaction",
+        severity: "action",
+        targetType: "transaction",
+        targetId: createdReference.id,
+        targetName: entry.buyer,
+        summary: `${session.discordName} created a ${entry.group} transaction for ${entry.buyer}.`,
+        details: {
+          amount: entry.amount,
+          unitPrice: entry.unitPrice,
+          total: entry.total,
+          group: entry.group
+        }
+      });
+
       showToast("Entry saved.");
     }
 
@@ -183,7 +226,21 @@ export async function removeRecord(id) {
   if (!window.confirm("Delete this entry? This cannot be undone.")) return;
 
   try {
+    const record = state.records.find((item) => item.id === id);
+
     await deleteDoc(doc(db, TRANSACTIONS_COLLECTION, id));
+
+    await writeAuditLog({
+      action: "Transaction Deleted",
+      category: "transaction",
+      severity: "warning",
+      targetType: "transaction",
+      targetId: id,
+      targetName: record?.buyer || "Unknown Transaction",
+      summary: `${getSession().discordName} deleted a transaction${record?.buyer ? ` for ${record.buyer}` : ""}.`,
+      details: record || {}
+    });
+
     showToast("Entry deleted.");
   } catch (error) {
     console.error(error);

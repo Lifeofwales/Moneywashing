@@ -27,6 +27,7 @@ import {
 import { renderAll, resetTransactionForm } from "./transactions.js";
 import { getSession } from "./auth.js";
 import { isOwner, isAdministrator, can } from "./permissions.js";
+import { writeAuditLog } from "./audit.js";
 
 const ACCESS_USERS_COLLECTION = "access_users";
 let accessUsers = [];
@@ -99,18 +100,36 @@ function populateBrandingForm() {
 async function saveBranding(event) {
   event.preventDefault();
 
+  const previousSettings = { ...state.settings };
+
   const primaryColor = normalizeHex(
     $("adminPrimaryColorText").value,
     $("adminPrimaryColor").value
   );
 
-  await saveSettings({
+  const nextSettings = {
     ...state.settings,
     siteTitle: $("adminSiteTitle").value.trim(),
     siteSubtitle: $("adminSiteSubtitle").value.trim(),
     primaryColor,
     defaultUnitPrice: Number($("adminDefaultPrice").value) || 0
-  }, "Website settings saved.");
+  };
+
+  await saveSettings(nextSettings, "Website settings saved.");
+
+  await writeAuditLog({
+    action: "Website Settings Updated",
+    category: "settings",
+    severity: "action",
+    targetType: "settings",
+    targetId: SETTINGS_DOCUMENT,
+    targetName: "Website Settings",
+    summary: `${getSession().discordName} updated website settings.`,
+    details: {
+      before: previousSettings,
+      after: nextSettings
+    }
+  });
 }
 
 export function renderGangList() {
@@ -216,6 +235,22 @@ async function saveGang(event) {
     { ...state.settings, gangs },
     editId ? "Gang updated." : "Gang added."
   );
+
+  await writeAuditLog({
+    action: editId ? "Gang Updated" : "Gang Added",
+    category: "gang",
+    severity: "action",
+    targetType: "gang",
+    targetId: editId || id,
+    targetName: name,
+    summary: `${getSession().discordName} ${editId ? "updated" : "added"} the gang ${name}.`,
+    details: {
+      name,
+      unitPrice,
+      accent
+    }
+  });
+
   resetGangForm();
 }
 
@@ -242,6 +277,17 @@ async function deleteGang(id) {
 
   const gangs = state.settings.gangs.filter((item) => item.id !== id);
   await saveSettings({ ...state.settings, gangs }, "Gang deleted.");
+
+  await writeAuditLog({
+    action: "Gang Deleted",
+    category: "gang",
+    severity: "warning",
+    targetType: "gang",
+    targetId: gang.id,
+    targetName: gang.name,
+    summary: `${getSession().discordName} deleted the gang ${gang.name}.`,
+    details: gang
+  });
 }
 
 function syncColorPicker(pickerId, textId) {
@@ -454,6 +500,22 @@ async function saveUser(event) {
       { merge: true }
     );
 
+    await writeAuditLog({
+      action: editId ? "User Updated" : "User Added",
+      category: "user",
+      severity: role === "owner" ? "critical" : "action",
+      targetType: "user",
+      targetId: discordId,
+      targetName: displayName,
+      summary: `${getSession().discordName} ${editId ? "updated" : "added"} ${displayName} as ${role}.`,
+      details: {
+        discordId,
+        displayName,
+        role,
+        active
+      }
+    });
+
     showToast(editId ? "User updated." : "User added.");
     resetUserForm();
   } catch (error) {
@@ -485,6 +547,18 @@ async function deleteUser(id) {
 
   try {
     await deleteDoc(doc(db, ACCESS_USERS_COLLECTION, id));
+
+    await writeAuditLog({
+      action: "User Access Removed",
+      category: "user",
+      severity: "critical",
+      targetType: "user",
+      targetId: id,
+      targetName: user.displayName || user.discordId,
+      summary: `${getSession().discordName} removed access for ${user.displayName || user.discordId}.`,
+      details: user
+    });
+
     showToast("User access removed.");
   } catch (error) {
     console.error(error);

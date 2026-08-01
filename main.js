@@ -27,6 +27,12 @@ import {
   startActiveUsersListener,
   stopActiveUsersListener
 } from "./presence.js";
+import {
+  bindAuditEvents,
+  applyAuditPermissions,
+  startAuditListener,
+  stopAuditLogs
+} from "./audit.js";
 
 let unsubscribeSettings = null;
 let unsubscribeTransactions = null;
@@ -39,6 +45,7 @@ async function initialize() {
     if (!session.user) {
       stopPresence();
       stopActiveUsersListener();
+      stopAuditLogs();
       stopLiveListeners();
       setConnection("Signed out", "Discord login required", false);
       return;
@@ -51,15 +58,18 @@ async function initialize() {
         bindNavigation();
         bindTransactionEvents();
         bindAdminEvents();
+        bindAuditEvents();
         appEventsBound = true;
       }
 
       // Refresh role-based controls every time authentication changes.
       applyAdminPermissions();
       applyTransactionPermissions();
+      applyAuditPermissions();
 
       await startPresence(session);
       startActiveUsersListener();
+      startAuditListener();
 
       await ensureSettingsDocument();
 

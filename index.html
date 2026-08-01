@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090d18">
   <title>The Revenants Operations Center</title>
-  <link rel="stylesheet" href="style.css?v=15">
+  <link rel="stylesheet" href="style.css?v=16">
 </head>
 <body>
   <section id="authGate" class="auth-gate">
@@ -40,6 +40,9 @@
         </button>
         <button class="nav-item" data-view="records">
           <span>▤</span> All Records
+        </button>
+        <button id="auditNavButton" class="nav-item hidden" data-view="audit">
+          <span>📜</span> Audit Center
         </button>
         <button id="adminNavButton" class="nav-item hidden" data-view="admin">
           <span>⚙</span> Admin Panel
@@ -132,6 +135,21 @@
             </div>
             <div id="recentEntries" class="recent-list"></div>
           </section>
+        </div>
+
+        <div class="dashboard-grid single-dashboard-panel">
+
+          <section class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">ACTIVITY</p>
+                <h3>Recent Audit Activity</h3>
+              </div>
+              <button class="text-button" data-go-view="audit">Open Audit Center</button>
+            </div>
+            <div id="recentAuditActivity" class="recent-audit-list"></div>
+          </section>
+
         </div>
       </section>
 
@@ -229,6 +247,53 @@
             </table>
           </div>
           <div id="emptyRecords" class="empty-state hidden">No records match your filters.</div>
+        </section>
+      </section>
+
+
+      <section id="auditView" class="view">
+        <section class="panel audit-panel">
+          <div class="panel-heading audit-heading">
+            <div>
+              <p class="eyebrow">OPERATIONS HISTORY</p>
+              <h3>Audit Center</h3>
+            </div>
+            <span id="auditResultCount" class="audit-result-count">0 events</span>
+          </div>
+
+          <div class="audit-filters">
+            <input
+              id="auditSearch"
+              type="search"
+              placeholder="Search actions, users, targets, or details"
+            >
+
+            <select id="auditCategoryFilter">
+              <option value="all">All categories</option>
+              <option value="transaction">Transactions</option>
+              <option value="user">User actions</option>
+              <option value="gang">Gangs</option>
+              <option value="settings">Settings</option>
+              <option value="security">Security</option>
+              <option value="general">General</option>
+            </select>
+
+            <select id="auditUserFilter">
+              <option value="all">All users</option>
+            </select>
+
+            <select id="auditSeverityFilter">
+              <option value="all">All severity levels</option>
+              <option value="info">Information</option>
+              <option value="action">Action</option>
+              <option value="warning">Warning</option>
+              <option value="critical">Critical</option>
+            </select>
+          </div>
+
+          <div id="auditLogList" class="audit-log-list">
+            <div class="empty-state">Loading audit events…</div>
+          </div>
         </section>
       </section>
 
@@ -384,6 +449,6 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="main.js?v=15"></script>
+  <script type="module" src="main.js?v=16"></script>
 </body>
 </html>
