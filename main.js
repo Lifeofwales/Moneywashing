@@ -12,7 +12,7 @@ import {
   initializeAuthentication,
   logout,
   DISCORD_LOGIN_URL
-} from "./auth.js";
+} from "./auth.js?v=13";
 import {
   $,
   showView,
