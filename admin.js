@@ -206,8 +206,6 @@ async function saveGang(event) {
     editId ? "Gang updated." : "Gang added."
   );
   resetGangForm();
-  resetUserForm();
-  startUsersListener();
 }
 
 async function deleteGang(id) {
