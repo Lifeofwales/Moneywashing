@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090d18">
   <title>The Revenants Operations Center</title>
-  <link rel="stylesheet" href="style.css?v=23">
+  <link rel="stylesheet" href="style.css?v=24">
 </head>
 <body>
   <section id="authGate" class="auth-gate">
@@ -29,6 +29,15 @@
           <h1 id="siteTitle">The Revenants Operations Center</h1>
           <p id="siteSubtitle">Secure Business & Gang Management</p>
         </div>
+      </div>
+
+      <div class="sidebar-search">
+        <input
+          id="sidebarSearchInput"
+          type="search"
+          placeholder="Search sidebar"
+          aria-label="Search sidebar tabs"
+        >
       </div>
 
       <nav class="nav-list" aria-label="Main navigation">
@@ -76,7 +85,23 @@
           <strong id="discordUserName">Discord User</strong>
           <small id="discordUserRole">Member</small>
         </div>
-        <button id="logoutButton" class="logout-button" type="button">Log out</button>
+        <button
+          id="profileMenuButton"
+          class="profile-menu-button"
+          type="button"
+          aria-label="Open profile menu"
+        >
+          ⋮
+        </button>
+      </div>
+
+      <div id="profileMenu" class="profile-menu hidden">
+        <button id="customizeWorkspaceButton" type="button">
+          🎛 Customize Workspace
+        </button>
+        <button id="logoutButton" type="button">
+          🚪 Log out
+        </button>
       </div>
 
 
@@ -1219,8 +1244,95 @@
     </main>
   </div>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  
+  <div id="workspaceOverlay" class="workspace-overlay hidden"></div>
 
-  <script type="module" src="main.js?v=23"></script>
+  <aside
+    id="workspacePanel"
+    class="workspace-panel hidden"
+    aria-label="Personal workspace settings"
+  >
+    <div class="workspace-panel-header">
+      <div>
+        <p class="eyebrow">PERSONAL SETTINGS</p>
+        <h2>Customize Workspace</h2>
+      </div>
+
+      <button
+        id="workspaceCloseButton"
+        class="workspace-close-button"
+        type="button"
+        aria-label="Close workspace settings"
+      >
+        ×
+      </button>
+    </div>
+
+    <p class="workspace-panel-help">
+      These settings are saved only to your account. They do not change
+      another user's sidebar or the Owner's shared order.
+    </p>
+
+    <section class="workspace-settings-section">
+      <div class="workspace-section-heading">
+        <h3>Sidebar Tabs</h3>
+        <small>Hide tabs or mark favorites.</small>
+      </div>
+
+      <div id="workspaceTabSettings" class="workspace-tab-settings"></div>
+    </section>
+
+    <section class="workspace-settings-section">
+      <div class="workspace-section-heading">
+        <h3>Display</h3>
+      </div>
+
+      <label class="workspace-setting-row">
+        <span>
+          <strong>Compact Sidebar</strong>
+          <small>Show icons instead of full tab names.</small>
+        </span>
+        <input id="workspaceCompactMode" type="checkbox">
+      </label>
+
+      <label class="workspace-setting-field">
+        Default Landing Page
+        <select id="workspaceLandingPage"></select>
+      </label>
+
+      <label class="workspace-setting-field">
+        Personal Accent Theme
+        <select id="workspaceTheme">
+          <option value="default">Organization Default</option>
+          <option value="blue">Blue</option>
+          <option value="orange">Orange</option>
+          <option value="purple">Purple</option>
+          <option value="green">Green</option>
+        </select>
+      </label>
+    </section>
+
+    <div class="workspace-panel-actions">
+      <button
+        id="workspaceSaveButton"
+        class="primary-button"
+        type="button"
+      >
+        Save My Workspace
+      </button>
+
+      <button
+        id="workspaceResetButton"
+        class="secondary-button"
+        type="button"
+      >
+        Reset My Workspace
+      </button>
+    </div>
+  </aside>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="main.js?v=24"></script>
 </body>
 </html>

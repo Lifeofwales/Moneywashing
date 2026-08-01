@@ -103,6 +103,10 @@ export function applyNavigationOrder() {
       navigation.appendChild(button);
     }
   });
+
+  window.dispatchEvent(
+    new CustomEvent("sharedNavigationOrderApplied")
+  );
 }
 
 export function applyBranding() {
@@ -112,6 +116,10 @@ export function applyBranding() {
   document.title = siteTitle;
   document.documentElement.style.setProperty("--primary", primaryColor);
   document.documentElement.style.setProperty("--primary-rgb", hexToRgb(primaryColor));
+
+  window.dispatchEvent(
+    new CustomEvent("brandingApplied")
+  );
 }
 
 export function refreshGangOptions(selectedGang = null) {

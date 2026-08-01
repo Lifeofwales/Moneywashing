@@ -60,6 +60,12 @@ import {
   bindDiscordIntegrationEvents,
   applyDiscordPermissions
 } from "./discord-integration.js";
+import {
+  bindWorkspaceEvents,
+  startWorkspacePreferences,
+  stopWorkspacePreferences,
+  resolveWorkspaceLandingPage
+} from "./workspace.js";
 
 let unsubscribeSettings = null;
 let unsubscribeTransactions = null;
@@ -76,6 +82,7 @@ async function initialize() {
       stopOperationsListeners();
       stopInventoryListeners();
       stopRuns();
+      stopWorkspacePreferences();
       stopLiveListeners();
       setConnection("Signed out", "Discord login required", false);
       return;
@@ -94,6 +101,7 @@ async function initialize() {
         bindInventoryEvents();
         bindRunsEvents();
         bindDiscordIntegrationEvents();
+        bindWorkspaceEvents();
         appEventsBound = true;
       }
 
@@ -116,13 +124,15 @@ async function initialize() {
 
       await ensureSettingsDocument();
 
+      await startWorkspacePreferences();
+
       stopLiveListeners();
       unsubscribeSettings = startSettingsListener();
       unsubscribeTransactions = startTransactionListener();
 
       resetTransactionForm();
       renderAnalytics();
-      showView("dashboard");
+      showView(resolveWorkspaceLandingPage());
       setConnection("Shared database", "Discord authenticated", true);
     } catch (error) {
       console.error(error);
