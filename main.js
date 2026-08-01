@@ -2,12 +2,12 @@ import {
   ensureSettingsDocument,
   startSettingsListener,
   bindAdminEvents
-} from "./admin.js?v=11";
+} from "./admin.js?v=12";
 import {
   startTransactionListener,
   bindTransactionEvents,
   resetTransactionForm
-} from "./transactions.js";
+} from "./transactions.js?v=12";
 import {
   initializeAuthentication,
   logout,
