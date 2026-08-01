@@ -1011,50 +1011,84 @@ input[type="color"] {
 }
 
 
-.discord-user-text small.sidebar-role-badge {
-  display: inline-flex;
+/* Active users sidebar card */
+.active-users-card {
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.active-users-heading {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  width: fit-content;
-  max-width: 100%;
-  margin-top: 5px;
-  padding: 4px 7px;
-  border: 1px solid transparent;
+  gap: 10px;
+}
+
+.active-users-heading strong {
+  font-size: 12px;
+}
+
+.active-users-heading span {
+  min-width: 22px;
+  padding: 3px 7px;
   border-radius: 999px;
-  font-size: 9px;
-  line-height: 1;
-  letter-spacing: 0.05em;
+  color: var(--success);
+  background: rgba(70, 211, 154, 0.1);
+  font-size: 10px;
   font-weight: 900;
+  text-align: center;
+}
+
+.active-users-list {
+  max-height: 170px;
+  overflow-y: auto;
+  display: grid;
+  gap: 8px;
+}
+
+.active-user-row {
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  background: #0b1020;
+}
+
+.active-user-row strong,
+.active-user-row small {
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.sidebar-role-owner {
-  color: #ffd76a !important;
-  border-color: rgba(255, 215, 106, 0.38) !important;
-  background: rgba(255, 215, 106, 0.12) !important;
+.active-user-row strong {
+  font-size: 11px;
 }
 
-.sidebar-role-admin {
-  color: #c4a8ff !important;
-  border-color: rgba(196, 168, 255, 0.38) !important;
-  background: rgba(196, 168, 255, 0.12) !important;
+.active-user-row small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 9px;
 }
 
-.sidebar-role-manager {
-  color: #69c8ff !important;
-  border-color: rgba(105, 200, 255, 0.38) !important;
-  background: rgba(105, 200, 255, 0.12) !important;
+.active-user-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 4px rgba(70, 211, 154, 0.1);
 }
 
-.sidebar-role-employee {
-  color: #67dda8 !important;
-  border-color: rgba(103, 221, 168, 0.38) !important;
-  background: rgba(103, 221, 168, 0.12) !important;
-}
-
-.sidebar-role-viewer {
-  color: #aab3c5 !important;
-  border-color: rgba(170, 179, 197, 0.32) !important;
-  background: rgba(170, 179, 197, 0.1) !important;
+.active-users-empty {
+  padding: 8px 2px;
+  color: var(--muted);
+  font-size: 10px;
+  text-align: center;
 }

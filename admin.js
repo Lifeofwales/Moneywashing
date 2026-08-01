@@ -25,7 +25,8 @@ import {
   safeText
 } from "./ui.js";
 import { renderAll, resetTransactionForm } from "./transactions.js";
-import { getSession } from "./auth.js?v=13";
+import { getSession } from "./auth.js";
+import { isOwner, isAdministrator, can } from "./permissions.js";
 
 const ACCESS_USERS_COLLECTION = "access_users";
 let accessUsers = [];
@@ -255,32 +256,26 @@ function syncColorPicker(pickerId, textId) {
 }
 
 
-function isOwner() {
-  return getSession().role === "owner" || getSession().isOwner === true;
-}
-
-function isAdministrator() {
-  return isOwner() || getSession().role === "admin" || getSession().isAdmin === true;
-}
 
 export function applyAdminPermissions() {
-  const administrator = isAdministrator();
-  const owner = isOwner();
+  const manageSettings = can("manageSettings");
+  const manageGangs = can("manageGangs");
+  const manageUsers = can("manageUsers");
 
-  $("brandingForm")?.classList.toggle("permission-locked", !administrator);
-  $("gangForm")?.classList.toggle("permission-locked", !administrator);
-  $("userManagementPanel")?.classList.toggle("hidden", !owner);
+  $("brandingForm")?.classList.toggle("permission-locked", !manageSettings);
+  $("gangForm")?.classList.toggle("permission-locked", !manageGangs);
+  $("userManagementPanel")?.classList.toggle("hidden", !manageUsers);
 
   $("brandingForm")
     ?.querySelectorAll("input, select, textarea, button")
     .forEach((element) => {
-      element.disabled = !administrator;
+      element.disabled = !manageSettings;
     });
 
   $("gangForm")
     ?.querySelectorAll("input, select, textarea, button")
     .forEach((element) => {
-      element.disabled = !administrator;
+      element.disabled = !manageGangs;
     });
 }
 

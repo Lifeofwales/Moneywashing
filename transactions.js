@@ -11,7 +11,8 @@ import {
   serverTimestamp
 } from "./firebase.js";
 import { state, TRANSACTIONS_COLLECTION } from "./state.js";
-import { getSession } from "./auth.js?v=13";
+import { getSession } from "./auth.js";
+import { transactionPermissions } from "./permissions.js";
 import {
   $,
   showView,
@@ -23,21 +24,9 @@ import {
   updatePriceForSelectedGang
 } from "./ui.js";
 
-const TRANSACTION_PERMISSIONS = {
-  owner:   { create: true,  edit: true,  delete: true  },
-  admin:   { create: true,  edit: true,  delete: true  },
-  manager: { create: true,  edit: true,  delete: false },
-  employee:{ create: true,  edit: false, delete: false },
-  viewer:  { create: false, edit: false, delete: false }
-};
-
-function permissions() {
-  return TRANSACTION_PERMISSIONS[getSession().role] ||
-    TRANSACTION_PERMISSIONS.viewer;
-}
 
 export function applyTransactionPermissions() {
-  const access = permissions();
+  const access = transactionPermissions();
 
   $("newEntryNavButton")?.classList.toggle("hidden", !access.create);
   $("quickAddButton")?.classList.toggle("hidden", !access.create);
@@ -93,7 +82,7 @@ export function resetTransactionForm() {
 export async function saveEntry(event) {
   event.preventDefault();
 
-  const access = permissions();
+  const access = transactionPermissions();
 
   if (state.editingRecordId ? !access.edit : !access.create) {
     showToast(
@@ -161,7 +150,7 @@ export async function saveEntry(event) {
 }
 
 export function editRecord(id) {
-  if (!permissions().edit) {
+  if (!transactionPermissions().edit) {
     showToast("Your role cannot edit transactions.", true);
     return;
   }
@@ -186,7 +175,7 @@ export function editRecord(id) {
 }
 
 export async function removeRecord(id) {
-  if (!permissions().delete) {
+  if (!transactionPermissions().delete) {
     showToast("Your role cannot delete transactions.", true);
     return;
   }
@@ -219,7 +208,7 @@ export function renderAll() {
   renderRecent();
   renderTable();
 
-  const access = permissions();
+  const access = transactionPermissions();
   $("newEntryNavButton")?.classList.toggle("hidden", !access.create);
   $("quickAddButton")?.classList.toggle("hidden", !access.create);
 }
@@ -269,7 +258,7 @@ function renderRecent() {
     return;
   }
 
-  const canEdit = permissions().edit;
+  const canEdit = transactionPermissions().edit;
 
   container.innerHTML = state.records.slice(0, 5).map((record) => `
     <${canEdit ? "button" : "div"}
@@ -306,12 +295,12 @@ function renderTable() {
       <td><strong>${formatCurrency(record.total)}</strong></td>
       <td>${safeText(record.accountUsed || "—")}</td>
       <td>
-        ${permissions().edit || permissions().delete ? `
+        ${transactionPermissions().edit || transactionPermissions().delete ? `
           <div class="table-actions">
-            ${permissions().edit
+            ${transactionPermissions().edit
               ? `<button data-edit-id="${record.id}">Edit</button>`
               : ""}
-            ${permissions().delete
+            ${transactionPermissions().delete
               ? `<button class="danger-action" data-delete-id="${record.id}">Delete</button>`
               : ""}
           </div>

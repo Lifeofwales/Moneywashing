@@ -1,24 +1,32 @@
 import {
   ensureSettingsDocument,
   startSettingsListener,
-  bindAdminEvents
-} from "./admin.js?v=12";
+  bindAdminEvents,
+  applyAdminPermissions
+} from "./admin.js";
 import {
   startTransactionListener,
   bindTransactionEvents,
-  resetTransactionForm
-} from "./transactions.js?v=12";
+  resetTransactionForm,
+  applyTransactionPermissions
+} from "./transactions.js";
 import {
   initializeAuthentication,
   logout,
   DISCORD_LOGIN_URL
-} from "./auth.js?v=13";
+} from "./auth.js";
 import {
   $,
   showView,
   setConnection,
   showToast
 } from "./ui.js";
+import {
+  startPresence,
+  stopPresence,
+  startActiveUsersListener,
+  stopActiveUsersListener
+} from "./presence.js";
 
 let unsubscribeSettings = null;
 let unsubscribeTransactions = null;
@@ -29,6 +37,8 @@ async function initialize() {
 
   await initializeAuthentication(async (session) => {
     if (!session.user) {
+      stopPresence();
+      stopActiveUsersListener();
       stopLiveListeners();
       setConnection("Signed out", "Discord login required", false);
       return;
@@ -43,6 +53,13 @@ async function initialize() {
         bindAdminEvents();
         appEventsBound = true;
       }
+
+      // Refresh role-based controls every time authentication changes.
+      applyAdminPermissions();
+      applyTransactionPermissions();
+
+      await startPresence(session);
+      startActiveUsersListener();
 
       await ensureSettingsDocument();
 

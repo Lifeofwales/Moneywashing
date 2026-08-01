@@ -17,6 +17,7 @@ let currentSession = {
   isOwner: false,
   isAdmin: false,
   isManager: false,
+  discordId: "",
   discordName: "",
   discordAvatar: ""
 };
@@ -57,6 +58,7 @@ export async function initializeAuthentication(onReady) {
           isOwner: claims.owner === true,
           isAdmin: claims.admin === true,
           isManager: claims.manager === true,
+          discordId: String(claims.discordId || ""),
 
           discordName:
             claims.discordDisplayName ||
@@ -78,6 +80,7 @@ export async function initializeAuthentication(onReady) {
           isOwner: false,
           isAdmin: false,
           isManager: false,
+          discordId: "",
           discordName: "",
           discordAvatar: ""
         };
