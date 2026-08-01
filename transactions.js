@@ -59,6 +59,7 @@ export function startTransactionListener() {
       ...item.data()
     }));
     renderAll();
+    refreshFinancialLedger();
   }, (error) => {
     console.error(error);
     showToast("Could not load transaction records.", true);
