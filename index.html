@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090d18">
   <title>The Revenants Operations Center</title>
-  <link rel="stylesheet" href="style.css?v=24">
+  <link rel="stylesheet" href="style.css?v=25">
 </head>
 <body>
   <section id="authGate" class="auth-gate">
@@ -241,27 +241,15 @@
       </section>
 
       <section id="dashboardView" class="view active">
-        <div class="stats-grid">
-          <article class="stat-card">
-            <span>Total Amount</span>
-            <strong id="totalAmount">0</strong>
-            <small>All units recorded</small>
-          </article>
-          <article class="stat-card">
-            <span>Total Value</span>
-            <strong id="totalValue">$0</strong>
-            <small>Calculated transaction value</small>
-          </article>
-          <article class="stat-card">
-            <span>Transactions</span>
-            <strong id="transactionCount">0</strong>
-            <small>Total saved entries</small>
-          </article>
-          <article class="stat-card">
-            <span>Top Gang</span>
-            <strong id="topGroup">—</strong>
-            <small>Highest total value</small>
-          </article>
+        <div class="stats-grid financial-dashboard-grid">
+          <article class="stat-card"><span>Dirty Rolls Remaining</span><strong id="dirtyRollsRemaining">0</strong><small>Gang purchases minus gang runs</small></article>
+          <article class="stat-card"><span>Dirty Value Remaining</span><strong id="dirtyValueRemaining">$0</strong><small>Estimated remaining dirty purchase value</small></article>
+          <article class="stat-card"><span>Gang Account Balance</span><strong id="gangAccountBalance">$0</strong><small>Clean money from Gang Account runs</small></article>
+          <article class="stat-card"><span>Lifetime Gang Washed</span><strong id="lifetimeGangWashed">$0</strong><small>All clean gang deposits</small></article>
+          <article class="stat-card"><span>Gang Deposits Today</span><strong id="gangDepositsToday">$0</strong><small>Completed today</small></article>
+          <article class="stat-card"><span>This Week</span><strong id="gangDepositsWeek">$0</strong><small>Gang deposits this week</small></article>
+          <article class="stat-card"><span>This Month</span><strong id="gangDepositsMonth">$0</strong><small>Gang deposits this month</small></article>
+          <article class="stat-card"><span>Estimated Gang Profit</span><strong id="gangEstimatedProfit">$0</strong><small>Deposits minus dirty cost and cuts</small></article>
         </div>
 
         <div class="dashboard-grid">
@@ -340,6 +328,14 @@
             </label>
 
             <label>
+              Account Type
+              <select id="accountType" required>
+                <option value="gang">Gang Account</option>
+                <option value="personal">Personal Account</option>
+              </select>
+            </label>
+
+            <label>
               Date
               <input id="transactionDate" type="date" required>
             </label>
@@ -389,6 +385,7 @@
                   <th>Unit Price</th>
                   <th>Total</th>
                   <th>Account</th>
+                  <th>Account Type</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -538,6 +535,10 @@
             <strong id="analyticsEmployeeCount">0</strong>
             <small>Users with recorded entries</small>
           </article>
+          <article class="stat-card"><span>Gang Account Balance</span><strong id="analyticsGangAccountBalance">$0</strong><small>Clean money from gang runs</small></article>
+          <article class="stat-card"><span>Dirty Rolls Remaining</span><strong id="analyticsDirtyRollsRemaining">0</strong><small>Gang dirty inventory</small></article>
+          <article class="stat-card"><span>Average Payout Per Roll</span><strong id="analyticsAveragePayoutPerRoll">$0</strong><small>Average gang return per roll</small></article>
+          <article class="stat-card"><span>Estimated Gang Profit</span><strong id="analyticsEstimatedGangProfit">$0</strong><small>Estimated net after costs and cuts</small></article>
         </div>
 
         <div class="analytics-chart-grid">
@@ -992,6 +993,14 @@
               <label>Washer<input id="successfulRunWasher" type="text" maxlength="100" placeholder="Washer name" required></label>
               <label>Amount (in Rolls)<input id="successfulRunAmountRolls" type="number" min="0" step="1" placeholder="0" required></label>
               <label>Route<select id="successfulRunRoute" required><option value="Liquor">Liquor</option><option value="Meat">Meat</option></select></label>
+
+              <label>
+                Destination Account
+                <select id="successfulRunDestinationAccount" required>
+                  <option value="gang">Gang Account</option>
+                  <option value="personal">Personal Account</option>
+                </select>
+              </label>
               <label>Cut Taken<input id="successfulRunCutTaken" type="number" min="0" step="0.01" placeholder="0" required></label>
               <label>Total at End<input id="successfulRunTotalAtEnd" type="number" min="0" step="0.01" placeholder="0" required></label>
               <label>Run Date<input id="successfulRunDate" type="date" required></label>
@@ -1333,6 +1342,6 @@
 
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="main.js?v=24"></script>
+  <script type="module" src="main.js?v=25"></script>
 </body>
 </html>

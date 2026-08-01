@@ -2525,3 +2525,10 @@ input[type="color"] {
     margin-bottom: 3px;
   }
 }
+
+.financial-dashboard-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.account-type-badge{display:inline-flex;width:fit-content;padding:5px 8px;border:1px solid var(--border);border-radius:999px;font-size:9px;font-weight:900;text-transform:uppercase}
+.account-type-badge.gang{color:var(--success);border-color:rgba(70,211,154,.34);background:rgba(70,211,154,.08)}
+.account-type-badge.personal{color:#ffd178;border-color:rgba(255,209,120,.34);background:rgba(255,209,120,.08)}
+@media(max-width:1100px){.financial-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.financial-dashboard-grid{grid-template-columns:1fr}}

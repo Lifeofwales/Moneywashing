@@ -66,6 +66,11 @@ import {
   stopWorkspacePreferences,
   resolveWorkspaceLandingPage
 } from "./workspace.js";
+import {
+  startFinancialLedgerListener,
+  stopFinancialLedgerListener,
+  refreshFinancialLedger
+} from "./ledger.js";
 
 let unsubscribeSettings = null;
 let unsubscribeTransactions = null;
@@ -83,6 +88,7 @@ async function initialize() {
       stopInventoryListeners();
       stopRuns();
       stopWorkspacePreferences();
+      stopFinancialLedgerListener();
       stopLiveListeners();
       setConnection("Signed out", "Discord login required", false);
       return;
@@ -121,6 +127,7 @@ async function initialize() {
       startOperationsListeners();
       startInventoryListeners();
       startRunsListener();
+      startFinancialLedgerListener();
 
       await ensureSettingsDocument();
 
@@ -132,6 +139,7 @@ async function initialize() {
 
       resetTransactionForm();
       renderAnalytics();
+      refreshFinancialLedger();
       showView(resolveWorkspaceLandingPage());
       setConnection("Shared database", "Discord authenticated", true);
     } catch (error) {

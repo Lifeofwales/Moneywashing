@@ -5,6 +5,7 @@ import {
   rankingEmployeeName,
   isEmployeeHidden
 } from "./rankings.js";
+import { getFinancialLedgerSummary } from "./ledger.js";
 
 let filteredRecords = [];
 
@@ -150,6 +151,12 @@ function calculateOverview(records) {
   );
 
   setText("analyticsEmployeeCount", formatNumber(uniqueEmployees.size));
+
+  const ledger = getFinancialLedgerSummary();
+  setText("analyticsGangAccountBalance", formatCurrency(ledger.gangAccountBalance));
+  setText("analyticsDirtyRollsRemaining", formatNumber(ledger.dirtyRollsRemaining));
+  setText("analyticsAveragePayoutPerRoll", formatCurrency(ledger.averagePayoutPerRoll));
+  setText("analyticsEstimatedGangProfit", formatCurrency(ledger.estimatedGangProfit));
 }
 
 function renderGangAnalytics(records) {

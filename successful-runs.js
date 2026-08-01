@@ -14,6 +14,7 @@ import { getSession } from "./auth.js";
 import { can } from "./permissions.js";
 import { writeAuditLog } from "./audit.js";
 import { sendDiscordNotification } from "./discord-integration.js";
+import { refreshFinancialLedger } from "./ledger.js";
 import {
   $,
   safeText,
@@ -146,6 +147,7 @@ function resetRunForm() {
   $("successfulRunId").value = "";
   $("successfulRunDate").value =
     new Date().toISOString().slice(0, 10);
+  $("successfulRunDestinationAccount").value = "personal";
   $("successfulRunSaveButton").textContent = "Save Successful Run";
   $("successfulRunCancelEdit").classList.add("hidden");
 }
@@ -163,6 +165,8 @@ async function saveRun(event) {
     amountRolls:
       Number($("successfulRunAmountRolls").value) || 0,
     route: $("successfulRunRoute").value,
+    destinationAccount:
+      $("successfulRunDestinationAccount").value || "personal",
     mistakes: $("successfulRunMistakes").value.trim(),
     cutTaken:
       Number($("successfulRunCutTaken").value) || 0,
@@ -213,6 +217,7 @@ async function saveRun(event) {
         }
       });
 
+      refreshFinancialLedger();
       showToast("Successful run updated.");
     } else {
       const reference = await addDoc(
@@ -241,12 +246,14 @@ async function saveRun(event) {
         washer: payload.washer,
         amountRolls: payload.amountRolls,
         route: payload.route,
+        destinationAccount: payload.destinationAccount,
         mistakes: payload.mistakes || "None",
         cutTaken: payload.cutTaken,
         totalAtEnd: payload.totalAtEnd,
         runDate: payload.runDate
       });
 
+      refreshFinancialLedger();
       showToast("Successful run saved.");
     }
 
@@ -271,6 +278,8 @@ function editRun(id) {
   $("successfulRunWasher").value = run.washer || "";
   $("successfulRunAmountRolls").value = run.amountRolls ?? 0;
   $("successfulRunRoute").value = run.route || "Liquor";
+  $("successfulRunDestinationAccount").value =
+    run.destinationAccount || "personal";
   $("successfulRunMistakes").value = run.mistakes || "";
   $("successfulRunCutTaken").value = run.cutTaken ?? 0;
   $("successfulRunTotalAtEnd").value = run.totalAtEnd ?? 0;
@@ -308,6 +317,7 @@ async function deleteRun(id) {
       details: run
     });
 
+    refreshFinancialLedger();
     showToast("Successful run deleted.");
   } catch (error) {
     console.error(error);
@@ -337,6 +347,11 @@ function renderRuns() {
       <div class="successful-run-heading">
         <div>
           <span class="operations-tag">${safeText(run.route)}</span>
+          <span class="operations-tag">${safeText(
+            (run.destinationAccount || "personal") === "gang"
+              ? "Gang Account"
+              : "Personal Account"
+          )}</span>
           <span class="operations-tag">${safeText(run.runDate)}</span>
         </div>
 

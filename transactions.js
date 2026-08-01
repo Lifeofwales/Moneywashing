@@ -16,6 +16,7 @@ import { transactionPermissions } from "./permissions.js";
 import { writeAuditLog } from "./audit.js";
 import { renderAnalytics } from "./analytics.js";
 import { sendDiscordNotification } from "./discord-integration.js";
+import { refreshFinancialLedger } from "./ledger.js";
 import {
   $,
   showView,
@@ -75,6 +76,7 @@ export function resetTransactionForm() {
   state.editingRecordId = null;
   $("recordId").value = "";
   $("transactionDate").value = new Date().toISOString().slice(0, 10);
+  $("accountType").value = "gang";
   $("formHeading").textContent = "New Transaction";
   $("saveButton").textContent = "Save Entry";
   $("cancelEditButton").classList.add("hidden");
@@ -119,6 +121,7 @@ export async function saveEntry(event) {
     unitPrice,
     total: amount * unitPrice,
     accountUsed: $("accountUsed").value.trim(),
+    accountType: $("accountType").value || "gang",
     transactionDate: $("transactionDate").value,
     notes: $("notes").value.trim(),
     updatedAt: new Date().toISOString(),
@@ -153,6 +156,7 @@ export async function saveEntry(event) {
         }
       });
 
+      refreshFinancialLedger();
       showToast("Entry updated.");
     } else {
       const createdReference = await addDoc(
@@ -190,10 +194,12 @@ export async function saveEntry(event) {
         unitPrice: entry.unitPrice,
         total: entry.total,
         accountUsed: entry.accountUsed || "Not provided",
+        accountType: entry.accountType || "gang",
         transactionDate: entry.transactionDate,
         notes: entry.notes || "None"
       });
 
+      refreshFinancialLedger();
       showToast("Entry saved.");
     }
 
@@ -221,6 +227,7 @@ export function editRecord(id) {
   $("amount").value = record.amount ?? "";
   $("unitPrice").value = record.unitPrice ?? "";
   $("accountUsed").value = record.accountUsed || "";
+  $("accountType").value = record.accountType || "gang";
   $("transactionDate").value = record.transactionDate || "";
   $("notes").value = record.notes || "";
   $("formHeading").textContent = "Edit Transaction";
@@ -254,6 +261,7 @@ export async function removeRecord(id) {
       details: record || {}
     });
 
+    refreshFinancialLedger();
     showToast("Entry deleted.");
   } catch (error) {
     console.error(error);
@@ -365,6 +373,19 @@ function renderTable() {
       <td>${formatCurrency(record.unitPrice)}</td>
       <td><strong>${formatCurrency(record.total)}</strong></td>
       <td>${safeText(record.accountUsed || "—")}</td>
+      <td>
+        <span class="account-type-badge ${
+          (record.accountType || "gang") === "personal"
+            ? "personal"
+            : "gang"
+        }">
+          ${
+            (record.accountType || "gang") === "personal"
+              ? "Personal"
+              : "Gang"
+          }
+        </span>
+      </td>
       <td>
         ${transactionPermissions().edit || transactionPermissions().delete ? `
           <div class="table-actions">
