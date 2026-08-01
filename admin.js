@@ -25,7 +25,7 @@ import {
   safeText
 } from "./ui.js";
 import { renderAll, resetTransactionForm } from "./transactions.js";
-import { getSession } from "./auth.js";
+import { getSession } from "./auth.js?v=13";
 
 const ACCESS_USERS_COLLECTION = "access_users";
 let accessUsers = [];
