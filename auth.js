@@ -4,6 +4,7 @@ import {
   onAuthStateChanged,
   signOut
 } from "./firebase.js";
+
 import { $, showToast } from "./ui.js";
 
 export const DISCORD_LOGIN_URL =
@@ -12,7 +13,10 @@ export const DISCORD_LOGIN_URL =
 let currentSession = {
   user: null,
   token: null,
+  role: "viewer",
+  isOwner: false,
   isAdmin: false,
+  isManager: false,
   discordName: "",
   discordAvatar: ""
 };
@@ -49,11 +53,16 @@ export async function initializeAuthentication(onReady) {
         currentSession = {
           user,
           token: tokenResult.token,
+          role: claims.role || "viewer",
+          isOwner: claims.owner === true,
           isAdmin: claims.admin === true,
+          isManager: claims.manager === true,
+
           discordName:
             claims.discordDisplayName ||
             claims.discordUsername ||
             "Discord User",
+
           discordAvatar: buildDiscordAvatar(
             claims.discordId,
             claims.discordAvatar
@@ -65,10 +74,14 @@ export async function initializeAuthentication(onReady) {
         currentSession = {
           user: null,
           token: null,
+          role: "viewer",
+          isOwner: false,
           isAdmin: false,
+          isManager: false,
           discordName: "",
           discordAvatar: ""
         };
+
         showSignedOutState();
       }
 
@@ -94,9 +107,13 @@ export async function logout() {
 
 function readCustomTokenFromHash() {
   const hash = window.location.hash.replace(/^#/, "");
-  if (!hash) return null;
+
+  if (!hash) {
+    return null;
+  }
 
   const parameters = new URLSearchParams(hash);
+
   return parameters.get("discordToken");
 }
 
@@ -120,10 +137,20 @@ function showSignedInState() {
   $("protectedApp").classList.remove("hidden");
 
   $("discordUserName").textContent = currentSession.discordName;
+
+  const roleNames = {
+    owner: "👑 Owner",
+    admin: "🛡 Administrator",
+    manager: "👔 Manager",
+    employee: "👷 Employee",
+    viewer: "👀 Viewer"
+  };
+
   $("discordUserRole").textContent =
-    currentSession.isAdmin ? "Administrator" : "Member";
+    roleNames[currentSession.role] || "Unknown";
 
   const avatar = $("discordUserAvatar");
+
   if (currentSession.discordAvatar) {
     avatar.src = currentSession.discordAvatar;
     avatar.classList.remove("hidden");
@@ -132,18 +159,34 @@ function showSignedInState() {
     avatar.removeAttribute("src");
     avatar.classList.add("hidden");
     $("discordAvatarFallback").classList.remove("hidden");
+
     $("discordAvatarFallback").textContent =
-      currentSession.discordName.slice(0, 1).toUpperCase();
+      currentSession.discordName
+        .slice(0, 1)
+        .toUpperCase();
   }
 
   $("adminNavButton").classList.toggle(
     "hidden",
-    !currentSession.isAdmin
+    !(
+      currentSession.role === "owner" ||
+      currentSession.role === "admin"
+    )
   );
 }
 
 function buildDiscordAvatar(discordId, avatarHash) {
-  if (!discordId || !avatarHash) return "";
-  const extension = avatarHash.startsWith("a_") ? "gif" : "png";
-  return `https://cdn.discordapp.com/avatars/${discordId}/${avatarHash}.${extension}?size=128`;
+  if (!discordId || !avatarHash) {
+    return "";
+  }
+
+  const extension =
+    avatarHash.startsWith("a_")
+      ? "gif"
+      : "png";
+
+  return (
+    `https://cdn.discordapp.com/avatars/` +
+    `${discordId}/${avatarHash}.${extension}?size=128`
+  );
 }
