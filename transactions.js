@@ -14,6 +14,7 @@ import { state, TRANSACTIONS_COLLECTION } from "./state.js";
 import { getSession } from "./auth.js";
 import { transactionPermissions } from "./permissions.js";
 import { writeAuditLog } from "./audit.js";
+import { renderAnalytics } from "./analytics.js";
 import {
   $,
   showView,
@@ -264,6 +265,7 @@ export function renderAll() {
   renderGroupBreakdown();
   renderRecent();
   renderTable();
+  renderAnalytics();
 
   const access = transactionPermissions();
   $("newEntryNavButton")?.classList.toggle("hidden", !access.create);

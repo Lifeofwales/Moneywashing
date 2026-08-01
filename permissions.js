@@ -8,7 +8,8 @@ const ROLE_PERMISSIONS = {
     deleteTransaction: true,
     manageSettings: true,
     manageGangs: true,
-    manageUsers: true
+    manageUsers: true,
+    viewAnalytics: true
   },
   admin: {
     view: true,
@@ -17,7 +18,11 @@ const ROLE_PERMISSIONS = {
     deleteTransaction: true,
     manageSettings: true,
     manageGangs: true,
-    manageUsers: false
+    manageUsers: false,
+    viewAnalytics: false,
+    viewAnalytics: false,
+    viewAnalytics: true,
+    viewAnalytics: true
   },
   manager: {
     view: true,
@@ -26,7 +31,9 @@ const ROLE_PERMISSIONS = {
     deleteTransaction: false,
     manageSettings: false,
     manageGangs: false,
-    manageUsers: false
+    manageUsers: false,
+    viewAnalytics: true,
+    viewAnalytics: true
   },
   employee: {
     view: true,
@@ -35,7 +42,9 @@ const ROLE_PERMISSIONS = {
     deleteTransaction: false,
     manageSettings: false,
     manageGangs: false,
-    manageUsers: false
+    manageUsers: false,
+    viewAnalytics: true,
+    viewAnalytics: true
   },
   viewer: {
     view: true,
@@ -44,7 +53,9 @@ const ROLE_PERMISSIONS = {
     deleteTransaction: false,
     manageSettings: false,
     manageGangs: false,
-    manageUsers: false
+    manageUsers: false,
+    viewAnalytics: true,
+    viewAnalytics: true
   }
 };
 

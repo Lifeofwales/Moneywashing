@@ -33,6 +33,11 @@ import {
   startAuditListener,
   stopAuditLogs
 } from "./audit.js";
+import {
+  bindAnalyticsEvents,
+  applyAnalyticsPermissions,
+  renderAnalytics
+} from "./analytics.js";
 
 let unsubscribeSettings = null;
 let unsubscribeTransactions = null;
@@ -59,6 +64,7 @@ async function initialize() {
         bindTransactionEvents();
         bindAdminEvents();
         bindAuditEvents();
+        bindAnalyticsEvents();
         appEventsBound = true;
       }
 
@@ -66,6 +72,7 @@ async function initialize() {
       applyAdminPermissions();
       applyTransactionPermissions();
       applyAuditPermissions();
+      applyAnalyticsPermissions();
 
       await startPresence(session);
       startActiveUsersListener();
@@ -78,6 +85,7 @@ async function initialize() {
       unsubscribeTransactions = startTransactionListener();
 
       resetTransactionForm();
+      renderAnalytics();
       showView("dashboard");
       setConnection("Shared database", "Discord authenticated", true);
     } catch (error) {

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090d18">
   <title>The Revenants Operations Center</title>
-  <link rel="stylesheet" href="style.css?v=17">
+  <link rel="stylesheet" href="style.css?v=18">
 </head>
 <body>
   <section id="authGate" class="auth-gate">
@@ -43,6 +43,9 @@
         </button>
         <button id="auditNavButton" class="nav-item hidden" data-view="audit">
           <span>📜</span> Audit Center
+        </button>
+        <button id="analyticsNavButton" class="nav-item hidden" data-view="analytics">
+          <span>🧠</span> Intelligence Center
         </button>
         <button id="adminNavButton" class="nav-item hidden" data-view="admin">
           <span>⚙</span> Admin Panel
@@ -306,6 +309,168 @@
         </section>
       </section>
 
+
+      <section id="analyticsView" class="view">
+        <section class="panel intelligence-header">
+          <div class="panel-heading intelligence-heading">
+            <div>
+              <p class="eyebrow">BUSINESS INTELLIGENCE</p>
+              <h3>Intelligence Center</h3>
+            </div>
+            <div class="intelligence-actions">
+              <span id="analyticsFilterCount" class="audit-result-count">
+                0 matching transactions
+              </span>
+              <button
+                id="analyticsExportCsv"
+                class="primary-button"
+                type="button"
+              >
+                Export CSV
+              </button>
+            </div>
+          </div>
+
+          <div class="intelligence-filters">
+            <label>
+              From Date
+              <input id="analyticsDateFrom" type="date">
+            </label>
+            <label>
+              To Date
+              <input id="analyticsDateTo" type="date">
+            </label>
+            <button
+              id="analyticsResetFilters"
+              class="secondary-button"
+              type="button"
+            >
+              Reset Dates
+            </button>
+          </div>
+        </section>
+
+        <div class="analytics-stats-grid">
+          <article class="stat-card">
+            <span>Lifetime Revenue</span>
+            <strong id="analyticsLifetimeRevenue">$0</strong>
+            <small>Filtered transaction total</small>
+          </article>
+          <article class="stat-card">
+            <span>Today</span>
+            <strong id="analyticsTodayRevenue">$0</strong>
+            <small>Revenue recorded today</small>
+          </article>
+          <article class="stat-card">
+            <span>This Week</span>
+            <strong id="analyticsWeekRevenue">$0</strong>
+            <small>Monday through today</small>
+          </article>
+          <article class="stat-card">
+            <span>This Month</span>
+            <strong id="analyticsMonthRevenue">$0</strong>
+            <small>Current calendar month</small>
+          </article>
+          <article class="stat-card">
+            <span>Average Transaction</span>
+            <strong id="analyticsAverageTransaction">$0</strong>
+            <small>Average total value</small>
+          </article>
+          <article class="stat-card">
+            <span>Largest Transaction</span>
+            <strong id="analyticsLargestTransaction">$0</strong>
+            <small>Highest single record</small>
+          </article>
+          <article class="stat-card">
+            <span>Transactions</span>
+            <strong id="analyticsTransactionCount">0</strong>
+            <small>Matching date filter</small>
+          </article>
+          <article class="stat-card">
+            <span>Active Employees</span>
+            <strong id="analyticsEmployeeCount">0</strong>
+            <small>Users with recorded entries</small>
+          </article>
+        </div>
+
+        <div class="analytics-chart-grid">
+          <section class="panel analytics-chart-panel wide-chart">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">TREND</p>
+                <h3>Revenue Over Time</h3>
+              </div>
+            </div>
+            <canvas id="analyticsRevenueChart" class="analytics-canvas"></canvas>
+          </section>
+
+          <section class="panel analytics-chart-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">COMPARISON</p>
+                <h3>Gang Revenue</h3>
+              </div>
+            </div>
+            <canvas id="analyticsGangChart" class="analytics-canvas"></canvas>
+          </section>
+
+          <section class="panel analytics-chart-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">PERFORMANCE</p>
+                <h3>Employee Revenue</h3>
+              </div>
+            </div>
+            <canvas id="analyticsEmployeeChart" class="analytics-canvas"></canvas>
+          </section>
+        </div>
+
+        <div class="analytics-leaderboard-grid">
+          <article class="leaderboard-card">
+            <span>Top Gang</span>
+            <strong id="leaderboardTopGang">—</strong>
+            <small id="leaderboardTopGangValue">$0</small>
+          </article>
+          <article class="leaderboard-card">
+            <span>Top Employee</span>
+            <strong id="leaderboardTopEmployee">—</strong>
+            <small id="leaderboardTopEmployeeValue">$0</small>
+          </article>
+          <article class="leaderboard-card">
+            <span>Most Transactions</span>
+            <strong id="leaderboardMostTransactions">—</strong>
+            <small id="leaderboardMostTransactionsValue">0 transactions</small>
+          </article>
+          <article class="leaderboard-card">
+            <span>Largest Buyer</span>
+            <strong id="leaderboardLargestBuyer">—</strong>
+            <small id="leaderboardLargestBuyerValue">$0</small>
+          </article>
+        </div>
+
+        <div class="intelligence-lists-grid">
+          <section class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">GANG INTELLIGENCE</p>
+                <h3>Gang Rankings</h3>
+              </div>
+            </div>
+            <div id="analyticsGangList" class="analytics-ranking-list"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">EMPLOYEE INTELLIGENCE</p>
+                <h3>Employee Rankings</h3>
+              </div>
+            </div>
+            <div id="analyticsEmployeeList" class="analytics-ranking-list"></div>
+          </section>
+        </div>
+      </section>
+
       <section id="adminView" class="view">
         <div class="admin-warning secured">
           <strong>Secure role-based access</strong>
@@ -458,6 +623,6 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="main.js?v=17"></script>
+  <script type="module" src="main.js?v=18"></script>
 </body>
 </html>
