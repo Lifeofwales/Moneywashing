@@ -376,10 +376,10 @@ async function saveUser(event) {
   const role = $("userRole").value;
   const active = $("userActive").checked;
 
-  if (!/^\d{15,25}$/.test(discordId)) {
-    showToast("Enter a valid Discord User ID.", true);
-    return;
-  }
+  if (!/^\d+$/.test(discordId) || discordId.length < 15 || discordId.length > 25) {
+  showToast("Enter a valid Discord User ID.", true);
+  return;
+}
 
   if (!displayName) {
     showToast("Enter a display name.", true);
