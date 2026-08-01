@@ -15,6 +15,7 @@ import { getSession } from "./auth.js";
 import { transactionPermissions } from "./permissions.js";
 import { writeAuditLog } from "./audit.js";
 import { renderAnalytics } from "./analytics.js";
+import { sendDiscordNotification } from "./discord-integration.js";
 import {
   $,
   showView,
@@ -180,6 +181,17 @@ export async function saveEntry(event) {
           total: entry.total,
           group: entry.group
         }
+      });
+
+      await sendDiscordNotification("transaction", {
+        gang: entry.group,
+        buyer: entry.buyer,
+        amount: entry.amount,
+        unitPrice: entry.unitPrice,
+        total: entry.total,
+        accountUsed: entry.accountUsed || "Not provided",
+        transactionDate: entry.transactionDate,
+        notes: entry.notes || "None"
       });
 
       showToast("Entry saved.");

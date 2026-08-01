@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090d18">
   <title>The Revenants Operations Center</title>
-  <link rel="stylesheet" href="style.css?v=20">
+  <link rel="stylesheet" href="style.css?v=21">
 </head>
 <body>
   <section id="authGate" class="auth-gate">
@@ -52,6 +52,12 @@
         </button>
         <button id="inventoryNavButton" class="nav-item hidden" data-view="inventory">
           <span>📦</span> Inventory Center
+        </button>
+        <button id="successfulRunsNavButton" class="nav-item hidden" data-view="successful-runs">
+          <span>🏁</span> Successful Runs
+        </button>
+        <button id="discordIntegrationNavButton" class="nav-item hidden" data-view="discord-integration">
+          <span>🔗</span> Discord Integration
         </button>
         <button id="adminNavButton" class="nav-item hidden" data-view="admin">
           <span>⚙</span> Admin Panel
@@ -830,6 +836,68 @@
         </section>
       </section>
 
+
+      <section id="successfulRunsView" class="view">
+        <div class="successful-runs-stats">
+          <article class="leaderboard-card"><span>Successful Runs</span><strong id="successfulRunsCount">0</strong><small>Total saved runs</small></article>
+          <article class="leaderboard-card"><span>Total Rolls</span><strong id="successfulRunsRolls">0</strong><small>Combined run amount</small></article>
+          <article class="leaderboard-card"><span>Total Cuts</span><strong id="successfulRunsCuts">$0</strong><small>Combined cuts taken</small></article>
+          <article class="leaderboard-card"><span>Total at End</span><strong id="successfulRunsEndingTotal">$0</strong><small>Combined ending total</small></article>
+        </div>
+
+        <section class="panel successful-runs-panel">
+          <div class="panel-heading">
+            <div><p class="eyebrow">RUN TRACKING</p><h3>Successful Runs</h3></div>
+            <span id="successfulRunsResultCount" class="audit-result-count">0 runs</span>
+          </div>
+
+          <form id="successfulRunForm" class="successful-run-form">
+            <input id="successfulRunId" type="hidden">
+            <div class="form-grid">
+              <label>Washer<input id="successfulRunWasher" type="text" maxlength="100" placeholder="Washer name" required></label>
+              <label>Amount (in Rolls)<input id="successfulRunAmountRolls" type="number" min="0" step="1" placeholder="0" required></label>
+              <label>Route<select id="successfulRunRoute" required><option value="Liquor">Liquor</option><option value="Meat">Meat</option></select></label>
+              <label>Cut Taken<input id="successfulRunCutTaken" type="number" min="0" step="0.01" placeholder="0" required></label>
+              <label>Total at End<input id="successfulRunTotalAtEnd" type="number" min="0" step="0.01" placeholder="0" required></label>
+              <label>Run Date<input id="successfulRunDate" type="date" required></label>
+              <label class="full-width">Mistakes<textarea id="successfulRunMistakes" rows="3" maxlength="700" placeholder="List mistakes, or enter None"></textarea></label>
+            </div>
+            <div class="form-actions">
+              <button id="successfulRunSaveButton" class="primary-button" type="submit">Save Successful Run</button>
+              <button id="successfulRunCancelEdit" class="text-button hidden" type="button">Cancel Edit</button>
+            </div>
+          </form>
+
+          <div class="successful-runs-filters">
+            <input id="successfulRunsSearch" type="search" placeholder="Search washer, mistakes, or submitted by">
+            <select id="successfulRunsRouteFilter"><option value="all">All routes</option><option value="Liquor">Liquor</option><option value="Meat">Meat</option></select>
+          </div>
+          <div id="successfulRunsList" class="successful-runs-list"></div>
+        </section>
+      </section>
+
+      <section id="discordIntegrationView" class="view">
+        <section class="panel discord-integration-panel">
+          <div class="panel-heading">
+            <div><p class="eyebrow">OWNER CONTROL</p><h3>Discord Integration</h3></div>
+            <span class="version-badge">VERSION 1.0 RC</span>
+          </div>
+          <div id="discordIntegrationStatus" class="discord-status-card">Ready to test the secure Worker connection.</div>
+          <div class="discord-integration-grid">
+            <article class="discord-route-card"><span>Entry Records</span><strong>TRANSACTION_WEBHOOK</strong><small>New Entry Records are routed to this Discord channel.</small></article>
+            <article class="discord-route-card"><span>Successful Runs</span><strong>RUNS_WEBHOOK</strong><small>New Successful Runs are routed to a separate channel.</small></article>
+            <article class="discord-route-card"><span>Test Channel</span><strong>DISCORD_TEST_WEBHOOK</strong><small>Used by the secure connection test below.</small></article>
+          </div>
+          <div class="discord-test-box">
+            <label>Test Message<textarea id="discordTestMessage" rows="3" maxlength="500">The Revenants Discord integration is online.</textarea></label>
+            <div class="form-actions">
+              <button id="discordTestButton" class="primary-button" type="button">Send Test Message</button>
+              <span>Last successful test: <strong id="discordLastTest">Not tested</strong></span>
+            </div>
+          </div>
+        </section>
+      </section>
+
       <section id="adminView" class="view">
         <div class="admin-warning secured">
           <strong>Secure role-based access</strong>
@@ -982,6 +1050,6 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="main.js?v=20"></script>
+  <script type="module" src="main.js?v=21"></script>
 </body>
 </html>

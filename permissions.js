@@ -17,7 +17,11 @@ const ROLE_PERMISSIONS = {
     updateAssignedTasks: true,
     viewInventory: true,
     manageInventory: true,
-    adjustInventory: true
+    adjustInventory: true,
+    viewRuns: true,
+    createRuns: true,
+    manageRuns: true,
+    manageDiscordIntegration: true
   },
   admin: {
     view: true,
@@ -35,7 +39,11 @@ const ROLE_PERMISSIONS = {
     updateAssignedTasks: true,
     viewInventory: true,
     manageInventory: true,
-    adjustInventory: true
+    adjustInventory: true,
+    viewRuns: true,
+    createRuns: true,
+    manageRuns: true,
+    manageDiscordIntegration: false
   },
   manager: {
     view: true,
@@ -53,7 +61,11 @@ const ROLE_PERMISSIONS = {
     updateAssignedTasks: true,
     viewInventory: true,
     manageInventory: true,
-    adjustInventory: true
+    adjustInventory: true,
+    viewRuns: true,
+    createRuns: true,
+    manageRuns: true,
+    manageDiscordIntegration: false
   },
   employee: {
     view: true,
@@ -71,7 +83,11 @@ const ROLE_PERMISSIONS = {
     updateAssignedTasks: true,
     viewInventory: true,
     manageInventory: false,
-    adjustInventory: true
+    adjustInventory: true,
+    viewRuns: true,
+    createRuns: true,
+    manageRuns: false,
+    manageDiscordIntegration: false
   },
   viewer: {
     view: true,
@@ -89,7 +105,11 @@ const ROLE_PERMISSIONS = {
     updateAssignedTasks: false,
     viewInventory: true,
     manageInventory: false,
-    adjustInventory: false
+    adjustInventory: false,
+    viewRuns: true,
+    createRuns: false,
+    manageRuns: false,
+    manageDiscordIntegration: false
   }
 };
 

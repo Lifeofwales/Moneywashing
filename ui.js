@@ -10,6 +10,8 @@ const views = {
   analytics: $("analyticsView"),
   operations: $("operationsView"),
   inventory: $("inventoryView"),
+  "successful-runs": $("successfulRunsView"),
+  "discord-integration": $("discordIntegrationView"),
   admin: $("adminView")
 };
 
@@ -28,6 +30,8 @@ export function showView(name) {
     analytics: "Intelligence Center",
     operations: "Operations Hub",
     inventory: "Inventory Center",
+    "successful-runs": "Successful Runs",
+    "discord-integration": "Discord Integration",
     admin: "Admin Panel"
   };
   $("pageTitle").textContent = labels[name] || "Dashboard";
