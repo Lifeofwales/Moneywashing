@@ -69,7 +69,7 @@ export function startSettingsListener() {
 }
 
 async function saveSettings(nextSettings, successMessage) {
-  if (!getSession().isAdmin) {
+  if (!isAdministrator()) {
     showToast("Administrator access is required.", true);
     return;
   }
@@ -147,6 +147,11 @@ function resetGangForm() {
 }
 
 function editGang(id) {
+  if (!isAdministrator()) {
+    showToast("Administrator access is required.", true);
+    return;
+  }
+
   const gang = state.settings.gangs.find((item) => item.id === id);
   if (!gang) return;
 
@@ -162,6 +167,11 @@ function editGang(id) {
 
 async function saveGang(event) {
   event.preventDefault();
+
+  if (!isAdministrator()) {
+    showToast("Administrator access is required.", true);
+    return;
+  }
 
   const editId = $("gangEditId").value;
   const name = $("gangName").value.trim();
@@ -209,6 +219,11 @@ async function saveGang(event) {
 }
 
 async function deleteGang(id) {
+  if (!isAdministrator()) {
+    showToast("Administrator access is required.", true);
+    return;
+  }
+
   const gang = state.settings.gangs.find((item) => item.id === id);
   if (!gang) return;
 
@@ -242,6 +257,31 @@ function syncColorPicker(pickerId, textId) {
 
 function isOwner() {
   return getSession().role === "owner" || getSession().isOwner === true;
+}
+
+function isAdministrator() {
+  return isOwner() || getSession().role === "admin" || getSession().isAdmin === true;
+}
+
+export function applyAdminPermissions() {
+  const administrator = isAdministrator();
+  const owner = isOwner();
+
+  $("brandingForm")?.classList.toggle("permission-locked", !administrator);
+  $("gangForm")?.classList.toggle("permission-locked", !administrator);
+  $("userManagementPanel")?.classList.toggle("hidden", !owner);
+
+  $("brandingForm")
+    ?.querySelectorAll("input, select, textarea, button")
+    .forEach((element) => {
+      element.disabled = !administrator;
+    });
+
+  $("gangForm")
+    ?.querySelectorAll("input, select, textarea, button")
+    .forEach((element) => {
+      element.disabled = !administrator;
+    });
 }
 
 function startUsersListener() {
@@ -370,24 +410,23 @@ async function saveUser(event) {
 
   const editId = $("userEditId").value.trim();
 
-// Clean the Discord ID in case extra characters were pasted
-const rawDiscordId = $("userDiscordId").value;
-const discordId = rawDiscordId.replace(/\D/g, "");
+  // Copy User ID may include hidden formatting. Keep digits only.
+  const rawDiscordId = $("userDiscordId").value;
+  const discordId = rawDiscordId.replace(/\D/g, "");
 
-const displayName = $("userDisplayName").value.trim();
-const role = $("userRole").value;
-const active = $("userActive").checked;
+  const displayName = $("userDisplayName").value.trim();
+  const role = $("userRole").value;
+  const active = $("userActive").checked;
 
-// Put the cleaned value back into the textbox
-$("userDiscordId").value = discordId;
+  $("userDiscordId").value = discordId;
 
-if (discordId.length < 15 || discordId.length > 25) {
-  showToast(
-    `Invalid Discord User ID (${discordId.length} digits found).`,
-    true
-  );
-  return;
-}
+  if (discordId.length < 15 || discordId.length > 25) {
+    showToast(
+      `Invalid Discord User ID (${discordId.length} digits found).`,
+      true
+    );
+    return;
+  }
 
   if (!displayName) {
     showToast("Enter a display name.", true);
@@ -485,4 +524,5 @@ export function bindAdminEvents() {
   resetGangForm();
   resetUserForm();
   startUsersListener();
+  applyAdminPermissions();
 }

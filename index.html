@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090d18">
   <title>The Revenants Operations Center</title>
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
   <section id="authGate" class="auth-gate">
@@ -35,7 +35,7 @@
         <button class="nav-item active" data-view="dashboard">
           <span>⌂</span> Dashboard
         </button>
-        <button class="nav-item" data-view="new-entry">
+        <button id="newEntryNavButton" class="nav-item" data-view="new-entry">
           <span>＋</span> New Entry
         </button>
         <button class="nav-item" data-view="records">
@@ -302,7 +302,7 @@
         </div>
 
 
-        <section class="panel user-management-panel">
+        <section id="userManagementPanel" class="panel user-management-panel">
           <div class="panel-heading">
             <div>
               <p class="eyebrow">ACCESS CONTROL</p>
@@ -373,6 +373,6 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="main.js?v=7"></script>
+  <script type="module" src="main.js?v=12"></script>
 </body>
 </html>

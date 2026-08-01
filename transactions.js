@@ -23,6 +23,37 @@ import {
   updatePriceForSelectedGang
 } from "./ui.js";
 
+const TRANSACTION_PERMISSIONS = {
+  owner:   { create: true,  edit: true,  delete: true  },
+  admin:   { create: true,  edit: true,  delete: true  },
+  manager: { create: true,  edit: true,  delete: false },
+  employee:{ create: true,  edit: false, delete: false },
+  viewer:  { create: false, edit: false, delete: false }
+};
+
+function permissions() {
+  return TRANSACTION_PERMISSIONS[getSession().role] ||
+    TRANSACTION_PERMISSIONS.viewer;
+}
+
+export function applyTransactionPermissions() {
+  const access = permissions();
+
+  $("newEntryNavButton")?.classList.toggle("hidden", !access.create);
+  $("quickAddButton")?.classList.toggle("hidden", !access.create);
+
+  const form = $("entryForm");
+  if (form) {
+    form.classList.toggle("permission-locked", !access.create);
+    form.querySelectorAll("input, select, textarea, button").forEach((element) => {
+      element.disabled = !access.create;
+    });
+  }
+
+  renderTable();
+  renderRecent();
+}
+
 export function startTransactionListener() {
   const recordsQuery = query(
     collection(db, TRANSACTIONS_COLLECTION),
@@ -61,6 +92,18 @@ export function resetTransactionForm() {
 
 export async function saveEntry(event) {
   event.preventDefault();
+
+  const access = permissions();
+
+  if (state.editingRecordId ? !access.edit : !access.create) {
+    showToast(
+      state.editingRecordId
+        ? "Your role cannot edit transactions."
+        : "Your role cannot add transactions.",
+      true
+    );
+    return;
+  }
 
   const amount = Number($("amount").value);
   const unitPrice = Number($("unitPrice").value);
@@ -118,6 +161,11 @@ export async function saveEntry(event) {
 }
 
 export function editRecord(id) {
+  if (!permissions().edit) {
+    showToast("Your role cannot edit transactions.", true);
+    return;
+  }
+
   const record = state.records.find((item) => item.id === id);
   if (!record) return;
 
@@ -138,6 +186,11 @@ export function editRecord(id) {
 }
 
 export async function removeRecord(id) {
+  if (!permissions().delete) {
+    showToast("Your role cannot delete transactions.", true);
+    return;
+  }
+
   if (!window.confirm("Delete this entry? This cannot be undone.")) return;
 
   try {
@@ -165,6 +218,10 @@ export function renderAll() {
   renderGroupBreakdown();
   renderRecent();
   renderTable();
+
+  const access = permissions();
+  $("newEntryNavButton")?.classList.toggle("hidden", !access.create);
+  $("quickAddButton")?.classList.toggle("hidden", !access.create);
 }
 
 function renderStats() {
@@ -212,15 +269,20 @@ function renderRecent() {
     return;
   }
 
+  const canEdit = permissions().edit;
+
   container.innerHTML = state.records.slice(0, 5).map((record) => `
-    <button class="recent-item" data-edit-id="${record.id}">
+    <${canEdit ? "button" : "div"}
+      class="recent-item ${canEdit ? "" : "recent-item-readonly"}"
+      ${canEdit ? `data-edit-id="${record.id}"` : ""}
+    >
       <span class="group-badge" style="--badge-color:${groupColor(record.group)}">${safeText(record.group)}</span>
       <span>
         <strong>${safeText(record.buyer)}</strong>
         <small>${safeText(record.transactionDate)}</small>
       </span>
       <strong>${formatCurrency(record.total)}</strong>
-    </button>
+    </${canEdit ? "button" : "div"}>
   `).join("");
 }
 
@@ -244,12 +306,16 @@ function renderTable() {
       <td><strong>${formatCurrency(record.total)}</strong></td>
       <td>${safeText(record.accountUsed || "—")}</td>
       <td>
-        ${getSession().isAdmin ? `
+        ${permissions().edit || permissions().delete ? `
           <div class="table-actions">
-            <button data-edit-id="${record.id}">Edit</button>
-            <button class="danger-action" data-delete-id="${record.id}">Delete</button>
+            ${permissions().edit
+              ? `<button data-edit-id="${record.id}">Edit</button>`
+              : ""}
+            ${permissions().delete
+              ? `<button class="danger-action" data-delete-id="${record.id}">Delete</button>`
+              : ""}
           </div>
-        ` : '<span class="permission-note">Admin only</span>'}
+        ` : '<span class="permission-note">View only</span>'}
       </td>
     </tr>
   `).join("");

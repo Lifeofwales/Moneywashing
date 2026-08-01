@@ -979,3 +979,33 @@ input[type="color"] {
     grid-column: auto;
   }
 }
+
+
+.permission-locked {
+  position: relative;
+  opacity: 0.72;
+}
+
+.permission-locked::after {
+  content: "Your current role does not allow changes in this section.";
+  display: block;
+  margin-top: 16px;
+  padding: 11px 13px;
+  border: 1px solid rgba(255, 191, 71, 0.3);
+  border-radius: 10px;
+  color: #ffd178;
+  background: rgba(255, 191, 71, 0.08);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.permission-locked input,
+.permission-locked select,
+.permission-locked textarea,
+.permission-locked button {
+  cursor: not-allowed;
+}
+
+.recent-item-readonly {
+  cursor: default;
+}
