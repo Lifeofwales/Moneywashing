@@ -15,6 +15,7 @@ export const AUDIT_COLLECTION = "audit_logs";
 
 let auditEntries = [];
 let stopAuditListener = null;
+let refreshTimer = null;
 
 function canViewAudit() {
   return ["owner", "admin", "manager"].includes(currentRole());
@@ -62,6 +63,7 @@ export function applyAuditPermissions() {
   const allowed = canViewAudit();
 
   $("auditNavButton")?.classList.toggle("hidden", !allowed);
+  $("dashboardAuditPanel")?.classList.toggle("hidden", !allowed);
 
   if (!allowed && $("auditView")?.classList.contains("active")) {
     document.querySelector('[data-view="dashboard"]')?.click();
@@ -69,11 +71,9 @@ export function applyAuditPermissions() {
 }
 
 export function startAuditListener() {
-  if (!canViewAudit()) return null;
+  stopAuditLogs();
 
-  if (stopAuditListener) {
-    stopAuditListener();
-  }
+  if (!canViewAudit()) return null;
 
   const auditQuery = query(
     collection(db, AUDIT_COLLECTION),
@@ -93,10 +93,21 @@ export function startAuditListener() {
       renderRecentAudit();
     },
     (error) => {
-      console.error(error);
+      console.error("Audit listener failed:", error);
       showToast("Could not load audit logs.", true);
+
+      const container = $("auditLogList");
+      if (container) {
+        container.innerHTML =
+          '<div class="empty-state">Audit logs could not be loaded. Check Firestore permissions.</div>';
+      }
     }
   );
+
+  refreshTimer = window.setInterval(() => {
+    renderAuditLogs();
+    renderRecentAudit();
+  }, 30000);
 
   return stopAuditListener;
 }
@@ -106,7 +117,12 @@ export function stopAuditLogs() {
     stopAuditListener();
   }
 
+  if (refreshTimer) {
+    window.clearInterval(refreshTimer);
+  }
+
   stopAuditListener = null;
+  refreshTimer = null;
   auditEntries = [];
 }
 
@@ -146,12 +162,43 @@ function severityLabel(severity) {
   return labels[severity] || "Information";
 }
 
-function formatAuditTime(entry) {
-  const value =
+function eventDate(entry) {
+  return (
     entry.createdAt?.toDate?.() ||
-    (entry.createdAtMs ? new Date(entry.createdAtMs) : null);
+    (entry.createdAtMs ? new Date(entry.createdAtMs) : null)
+  );
+}
 
-  if (!value) return "Just now";
+function relativeTime(entry) {
+  const date = eventDate(entry);
+  if (!date) return "Just now";
+
+  const seconds = Math.max(
+    0,
+    Math.floor((Date.now() - date.getTime()) / 1000)
+  );
+
+  if (seconds < 60) return `${seconds}s ago`;
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d ago`;
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  }).format(date);
+}
+
+function fullTime(entry) {
+  const date = eventDate(entry);
+  if (!date) return "Just now";
 
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
@@ -159,7 +206,7 @@ function formatAuditTime(entry) {
     year: "numeric",
     hour: "numeric",
     minute: "2-digit"
-  }).format(value);
+  }).format(date);
 }
 
 function matchingEntries() {
@@ -208,9 +255,22 @@ function refreshAuditFilters() {
       userFilter.add(new Option(name, uid));
     });
 
-  if ([...users.keys()].includes(selected)) {
+  if (users.has(selected)) {
     userFilter.value = selected;
   }
+}
+
+function detailsMarkup(details) {
+  if (!details || typeof details !== "object") return "";
+
+  const text = JSON.stringify(details, null, 2);
+
+  return `
+    <details class="audit-details">
+      <summary>View details</summary>
+      <pre>${safeText(text)}</pre>
+    </details>
+  `;
 }
 
 export function renderAuditLogs() {
@@ -220,7 +280,9 @@ export function renderAuditLogs() {
   if (!container || !count) return;
 
   const visible = matchingEntries();
-  count.textContent = `${visible.length} event${visible.length === 1 ? "" : "s"}`;
+
+  count.textContent =
+    `${visible.length} event${visible.length === 1 ? "" : "s"}`;
 
   if (!visible.length) {
     container.innerHTML =
@@ -234,10 +296,13 @@ export function renderAuditLogs() {
 
       <div class="audit-content">
         <div class="audit-title-row">
-          <div>
+          <div class="audit-title-group">
             <strong>${safeText(entry.action || "Activity")}</strong>
-            <span class="audit-category">${safeText(categoryLabel(entry.category))}</span>
+            <span class="audit-category">
+              ${safeText(categoryLabel(entry.category))}
+            </span>
           </div>
+
           <span class="audit-severity">
             ${safeText(severityLabel(entry.severity))}
           </span>
@@ -250,7 +315,10 @@ export function renderAuditLogs() {
             ${safeText(entry.actor?.name || "Unknown User")}
             · ${safeText(roleLabel(entry.actor?.role))}
           </span>
-          <span>${safeText(formatAuditTime(entry))}</span>
+
+          <span title="${safeText(fullTime(entry))}">
+            ${safeText(relativeTime(entry))}
+          </span>
         </div>
 
         ${entry.targetName ? `
@@ -258,6 +326,8 @@ export function renderAuditLogs() {
             Target: ${safeText(entry.targetName)}
           </div>
         ` : ""}
+
+        ${detailsMarkup(entry.details)}
       </div>
     </article>
   `).join("");
@@ -288,7 +358,7 @@ export function renderRecentAudit() {
         <strong>${safeText(entry.action || "Activity")}</strong>
         <small>
           ${safeText(entry.actor?.name || "Unknown User")}
-          · ${safeText(formatAuditTime(entry))}
+          · ${safeText(relativeTime(entry))}
         </small>
       </div>
     </div>
@@ -296,9 +366,15 @@ export function renderRecentAudit() {
 }
 
 export function bindAuditEvents() {
-  ["auditSearch", "auditCategoryFilter", "auditUserFilter", "auditSeverityFilter"]
-    .forEach((id) => {
-      $(id)?.addEventListener("input", renderAuditLogs);
-      $(id)?.addEventListener("change", renderAuditLogs);
-    });
+  $("auditSearch")?.addEventListener("input", renderAuditLogs);
+  $("auditCategoryFilter")?.addEventListener("change", renderAuditLogs);
+  $("auditUserFilter")?.addEventListener("change", renderAuditLogs);
+  $("auditSeverityFilter")?.addEventListener("change", renderAuditLogs);
+  $("auditClearFilters")?.addEventListener("click", () => {
+    $("auditSearch").value = "";
+    $("auditCategoryFilter").value = "all";
+    $("auditUserFilter").value = "all";
+    $("auditSeverityFilter").value = "all";
+    renderAuditLogs();
+  });
 }

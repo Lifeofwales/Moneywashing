@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090d18">
   <title>The Revenants Operations Center</title>
-  <link rel="stylesheet" href="style.css?v=16">
+  <link rel="stylesheet" href="style.css?v=17">
 </head>
 <body>
   <section id="authGate" class="auth-gate">
@@ -136,21 +136,20 @@
             <div id="recentEntries" class="recent-list"></div>
           </section>
         </div>
-
-        <div class="dashboard-grid single-dashboard-panel">
-
-          <section class="panel">
-            <div class="panel-heading">
-              <div>
-                <p class="eyebrow">ACTIVITY</p>
-                <h3>Recent Audit Activity</h3>
-              </div>
-              <button class="text-button" data-go-view="audit">Open Audit Center</button>
+        <section id="dashboardAuditPanel" class="panel dashboard-audit-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">ACTIVITY</p>
+              <h3>Recent Audit Activity</h3>
             </div>
-            <div id="recentAuditActivity" class="recent-audit-list"></div>
-          </section>
-
-        </div>
+            <button class="text-button" data-go-view="audit">
+              Open Audit Center
+            </button>
+          </div>
+          <div id="recentAuditActivity" class="recent-audit-list">
+            <div class="empty-state">Loading activity…</div>
+          </div>
+        </section>
       </section>
 
       <section id="newEntryView" class="view">
@@ -258,7 +257,9 @@
               <p class="eyebrow">OPERATIONS HISTORY</p>
               <h3>Audit Center</h3>
             </div>
-            <span id="auditResultCount" class="audit-result-count">0 events</span>
+            <span id="auditResultCount" class="audit-result-count">
+              0 events
+            </span>
           </div>
 
           <div class="audit-filters">
@@ -289,6 +290,14 @@
               <option value="warning">Warning</option>
               <option value="critical">Critical</option>
             </select>
+
+            <button
+              id="auditClearFilters"
+              class="secondary-button"
+              type="button"
+            >
+              Clear Filters
+            </button>
           </div>
 
           <div id="auditLogList" class="audit-log-list">
@@ -449,6 +458,6 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="main.js?v=16"></script>
+  <script type="module" src="main.js?v=17"></script>
 </body>
 </html>
