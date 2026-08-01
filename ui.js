@@ -8,6 +8,7 @@ const views = {
   records: $("recordsView"),
   audit: $("auditView"),
   analytics: $("analyticsView"),
+  operations: $("operationsView"),
   admin: $("adminView")
 };
 
@@ -24,6 +25,7 @@ export function showView(name) {
     records: "All Records",
     audit: "Audit Center",
     analytics: "Intelligence Center",
+    operations: "Operations Hub",
     admin: "Admin Panel"
   };
   $("pageTitle").textContent = labels[name] || "Dashboard";

@@ -9,7 +9,12 @@ const ROLE_PERMISSIONS = {
     manageSettings: true,
     manageGangs: true,
     manageUsers: true,
-    viewAnalytics: true
+    viewAnalytics: true,
+    viewAudit: true,
+    viewOperations: true,
+    manageOperations: true,
+    contributeNotes: true,
+    updateAssignedTasks: true
   },
   admin: {
     view: true,
@@ -19,10 +24,12 @@ const ROLE_PERMISSIONS = {
     manageSettings: true,
     manageGangs: true,
     manageUsers: false,
-    viewAnalytics: false,
-    viewAnalytics: false,
     viewAnalytics: true,
-    viewAnalytics: true
+    viewAudit: true,
+    viewOperations: true,
+    manageOperations: true,
+    contributeNotes: true,
+    updateAssignedTasks: true
   },
   manager: {
     view: true,
@@ -33,7 +40,11 @@ const ROLE_PERMISSIONS = {
     manageGangs: false,
     manageUsers: false,
     viewAnalytics: true,
-    viewAnalytics: true
+    viewAudit: true,
+    viewOperations: true,
+    manageOperations: true,
+    contributeNotes: true,
+    updateAssignedTasks: true
   },
   employee: {
     view: true,
@@ -43,8 +54,12 @@ const ROLE_PERMISSIONS = {
     manageSettings: false,
     manageGangs: false,
     manageUsers: false,
-    viewAnalytics: true,
-    viewAnalytics: true
+    viewAnalytics: false,
+    viewAudit: false,
+    viewOperations: true,
+    manageOperations: false,
+    contributeNotes: true,
+    updateAssignedTasks: true
   },
   viewer: {
     view: true,
@@ -54,8 +69,12 @@ const ROLE_PERMISSIONS = {
     manageSettings: false,
     manageGangs: false,
     manageUsers: false,
-    viewAnalytics: true,
-    viewAnalytics: true
+    viewAnalytics: false,
+    viewAudit: false,
+    viewOperations: true,
+    manageOperations: false,
+    contributeNotes: false,
+    updateAssignedTasks: false
   }
 };
 

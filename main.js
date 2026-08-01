@@ -38,6 +38,12 @@ import {
   applyAnalyticsPermissions,
   renderAnalytics
 } from "./analytics.js";
+import {
+  bindOperationsEvents,
+  applyOperationsPermissions,
+  startOperationsListeners,
+  stopOperationsListeners
+} from "./operations.js";
 
 let unsubscribeSettings = null;
 let unsubscribeTransactions = null;
@@ -51,6 +57,7 @@ async function initialize() {
       stopPresence();
       stopActiveUsersListener();
       stopAuditLogs();
+      stopOperationsListeners();
       stopLiveListeners();
       setConnection("Signed out", "Discord login required", false);
       return;
@@ -65,6 +72,7 @@ async function initialize() {
         bindAdminEvents();
         bindAuditEvents();
         bindAnalyticsEvents();
+        bindOperationsEvents();
         appEventsBound = true;
       }
 
@@ -73,10 +81,12 @@ async function initialize() {
       applyTransactionPermissions();
       applyAuditPermissions();
       applyAnalyticsPermissions();
+      applyOperationsPermissions();
 
       await startPresence(session);
       startActiveUsersListener();
       startAuditListener();
+      startOperationsListeners();
 
       await ensureSettingsDocument();
 

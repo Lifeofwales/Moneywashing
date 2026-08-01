@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090d18">
   <title>The Revenants Operations Center</title>
-  <link rel="stylesheet" href="style.css?v=18">
+  <link rel="stylesheet" href="style.css?v=19">
 </head>
 <body>
   <section id="authGate" class="auth-gate">
@@ -46,6 +46,9 @@
         </button>
         <button id="analyticsNavButton" class="nav-item hidden" data-view="analytics">
           <span>🧠</span> Intelligence Center
+        </button>
+        <button id="operationsNavButton" class="nav-item hidden" data-view="operations">
+          <span>🏠</span> Operations Hub
         </button>
         <button id="adminNavButton" class="nav-item hidden" data-view="admin">
           <span>⚙</span> Admin Panel
@@ -471,6 +474,170 @@
         </div>
       </section>
 
+
+      <section id="operationsView" class="view">
+        <div class="hub-stats-grid">
+          <article class="leaderboard-card">
+            <span>Announcements</span>
+            <strong id="hubAnnouncementCount">0</strong>
+            <small>Published updates</small>
+          </article>
+          <article class="leaderboard-card">
+            <span>Open Tasks</span>
+            <strong id="hubOpenTaskCount">0</strong>
+            <small>Pending work</small>
+          </article>
+          <article class="leaderboard-card">
+            <span>Objectives</span>
+            <strong id="hubObjectiveCount">0</strong>
+            <small>Active goals</small>
+          </article>
+          <article class="leaderboard-card">
+            <span>Events</span>
+            <strong id="hubEventCount">0</strong>
+            <small>Scheduled items</small>
+          </article>
+        </div>
+
+        <section class="panel operations-quick-actions">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">COMMAND CENTER</p>
+              <h3>Quick Actions</h3>
+            </div>
+          </div>
+          <div class="hub-quick-buttons">
+            <button class="primary-button" data-go-view="new-entry">New Transaction</button>
+            <button class="secondary-button" data-go-view="analytics">View Analytics</button>
+            <button class="secondary-button" data-go-view="audit">View Audit</button>
+          </div>
+        </section>
+
+        <div class="operations-grid">
+          <section class="panel operations-section">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">COMMUNICATION</p>
+                <h3>Announcements</h3>
+              </div>
+            </div>
+
+            <form id="announcementForm" class="operations-form" data-operations-manage>
+              <input id="announcementTitle" type="text" maxlength="100" placeholder="Announcement title" required>
+              <textarea id="announcementMessage" rows="3" maxlength="600" placeholder="Announcement message" required></textarea>
+              <div class="operations-form-row">
+                <select id="announcementPriority">
+                  <option value="normal">Normal</option>
+                  <option value="important">Important</option>
+                  <option value="critical">Critical</option>
+                </select>
+                <label class="checkbox-label">
+                  <input id="announcementPinned" type="checkbox">
+                  <span>Pin announcement</span>
+                </label>
+                <button class="primary-button" type="submit">Publish</button>
+              </div>
+            </form>
+
+            <div id="announcementList" class="operations-list"></div>
+          </section>
+
+          <section class="panel operations-section">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">WORKFLOW</p>
+                <h3>Task Board</h3>
+              </div>
+            </div>
+
+            <form id="taskForm" class="operations-form" data-operations-manage>
+              <input id="taskTitle" type="text" maxlength="100" placeholder="Task title" required>
+              <textarea id="taskDescription" rows="3" maxlength="600" placeholder="Task description"></textarea>
+              <div class="operations-form-row">
+                <select id="taskAssignee">
+                  <option value="all">All team members</option>
+                </select>
+                <select id="taskPriority">
+                  <option value="normal">Normal</option>
+                  <option value="important">Important</option>
+                  <option value="critical">Critical</option>
+                </select>
+                <input id="taskDueDate" type="date">
+                <button class="primary-button" type="submit">Create Task</button>
+              </div>
+            </form>
+
+            <div id="taskList" class="operations-list"></div>
+          </section>
+
+          <section class="panel operations-section">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">GOALS</p>
+                <h3>Objectives</h3>
+              </div>
+            </div>
+
+            <form id="objectiveForm" class="operations-form" data-operations-manage>
+              <input id="objectiveTitle" type="text" maxlength="100" placeholder="Objective title" required>
+              <div class="operations-form-row">
+                <input id="objectiveCurrent" type="number" min="0" value="0" placeholder="Current">
+                <input id="objectiveTarget" type="number" min="1" placeholder="Target" required>
+                <input id="objectiveUnit" type="text" maxlength="30" placeholder="Units">
+                <input id="objectiveDueDate" type="date">
+                <button class="primary-button" type="submit">Add Objective</button>
+              </div>
+            </form>
+
+            <div id="objectiveList" class="objective-list"></div>
+          </section>
+
+          <section class="panel operations-section">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">TEAM NOTEBOOK</p>
+                <h3>Shared Notes</h3>
+              </div>
+            </div>
+
+            <form id="noteForm" class="operations-form">
+              <input id="noteTitle" type="text" maxlength="100" placeholder="Note title" required>
+              <textarea id="noteContent" rows="3" maxlength="800" placeholder="Write a shared note" required></textarea>
+              <div class="operations-form-row">
+                <label class="checkbox-label">
+                  <input id="notePinned" type="checkbox">
+                  <span>Pin note</span>
+                </label>
+                <button class="primary-button" type="submit">Add Note</button>
+              </div>
+            </form>
+
+            <div id="noteList" class="operations-list"></div>
+          </section>
+
+          <section class="panel operations-section operations-events-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">SCHEDULE</p>
+                <h3>Events</h3>
+              </div>
+            </div>
+
+            <form id="eventForm" class="operations-form" data-operations-manage>
+              <input id="eventTitle" type="text" maxlength="100" placeholder="Event title" required>
+              <div class="operations-form-row">
+                <input id="eventDate" type="datetime-local" required>
+                <input id="eventLocation" type="text" maxlength="120" placeholder="Location">
+                <button class="primary-button" type="submit">Schedule Event</button>
+              </div>
+              <textarea id="eventDescription" rows="3" maxlength="600" placeholder="Event details"></textarea>
+            </form>
+
+            <div id="eventList" class="operations-list"></div>
+          </section>
+        </div>
+      </section>
+
       <section id="adminView" class="view">
         <div class="admin-warning secured">
           <strong>Secure role-based access</strong>
@@ -623,6 +790,6 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="main.js?v=18"></script>
+  <script type="module" src="main.js?v=19"></script>
 </body>
 </html>
