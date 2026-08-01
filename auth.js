@@ -130,6 +130,13 @@ function showSignedOutState() {
   $("protectedApp").classList.add("hidden");
   $("authStatus").textContent = "Sign in with Discord to continue.";
   $("adminNavButton").classList.add("hidden");
+
+  const roleElement = $("discordUserRole");
+  if (roleElement) {
+    roleElement.textContent = "SIGNED OUT";
+    roleElement.className =
+      "sidebar-role-badge sidebar-role-viewer";
+  }
 }
 
 function showSignedInState() {
@@ -139,15 +146,20 @@ function showSignedInState() {
   $("discordUserName").textContent = currentSession.discordName;
 
   const roleNames = {
-    owner: "👑 Owner",
-    admin: "🛡 Administrator",
-    manager: "👔 Manager",
-    employee: "👷 Employee",
-    viewer: "👀 Viewer"
+    owner: "👑 OWNER",
+    admin: "🛡 ADMINISTRATOR",
+    manager: "👔 MANAGER",
+    employee: "👷 EMPLOYEE",
+    viewer: "👀 VIEWER"
   };
 
-  $("discordUserRole").textContent =
-    roleNames[currentSession.role] || "Unknown";
+  const roleElement = $("discordUserRole");
+  roleElement.textContent =
+    roleNames[currentSession.role] || "UNKNOWN";
+  roleElement.className = "sidebar-role-badge";
+  roleElement.classList.add(
+    `sidebar-role-${currentSession.role || "viewer"}`
+  );
 
   const avatar = $("discordUserAvatar");
 

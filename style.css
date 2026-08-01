@@ -1009,3 +1009,52 @@ input[type="color"] {
 .recent-item-readonly {
   cursor: default;
 }
+
+
+.discord-user-text small.sidebar-role-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 5px;
+  padding: 4px 7px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-role-owner {
+  color: #ffd76a !important;
+  border-color: rgba(255, 215, 106, 0.38) !important;
+  background: rgba(255, 215, 106, 0.12) !important;
+}
+
+.sidebar-role-admin {
+  color: #c4a8ff !important;
+  border-color: rgba(196, 168, 255, 0.38) !important;
+  background: rgba(196, 168, 255, 0.12) !important;
+}
+
+.sidebar-role-manager {
+  color: #69c8ff !important;
+  border-color: rgba(105, 200, 255, 0.38) !important;
+  background: rgba(105, 200, 255, 0.12) !important;
+}
+
+.sidebar-role-employee {
+  color: #67dda8 !important;
+  border-color: rgba(103, 221, 168, 0.38) !important;
+  background: rgba(103, 221, 168, 0.12) !important;
+}
+
+.sidebar-role-viewer {
+  color: #aab3c5 !important;
+  border-color: rgba(170, 179, 197, 0.32) !important;
+  background: rgba(170, 179, 197, 0.1) !important;
+}
