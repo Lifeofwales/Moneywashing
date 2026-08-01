@@ -2,7 +2,7 @@ import {
   ensureSettingsDocument,
   startSettingsListener,
   bindAdminEvents
-} from "./admin.js?v=9";
+} from "./admin.js?v=11";
 import {
   startTransactionListener,
   bindTransactionEvents,
