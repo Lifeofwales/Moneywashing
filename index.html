@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#090d18">
   <title>The Revenants Operations Center</title>
-  <link rel="stylesheet" href="style.css?v=26">
+  <link rel="stylesheet" href="style.css?v=29">
 </head>
 <body>
   <section id="authGate" class="auth-gate">
@@ -67,6 +67,9 @@
         </button>
         <button id="successfulRunsNavButton" class="nav-item hidden" data-view="successful-runs">
           <span>🏁</span> Successful Runs
+        </button>
+        <button id="unsuccessfulRunsNavButton" class="nav-item hidden" data-view="unsuccessful-runs">
+          <span>🔴</span> Unsuccessful Runs
         </button>
         <button id="discordIntegrationNavButton" class="nav-item hidden" data-view="discord-integration">
           <span>🔗</span> Discord Integration
@@ -180,6 +183,14 @@
           </article>
 
           <article class="intro-card">
+            <span>🔴</span>
+            <div>
+              <h4>Unsuccessful Runs</h4>
+              <p>Records attempted gang washes, rolls lost, rolls returned, and the reason for the failure.</p>
+            </div>
+          </article>
+
+          <article class="intro-card">
             <span>🏠</span>
             <div>
               <h4>Operations Hub</h4>
@@ -252,7 +263,61 @@
           <article class="stat-card"><span>Estimated Gang Profit</span><strong id="gangEstimatedProfit">$0</strong><small>Deposits minus dirty cost and cuts</small></article>
         </div>
 
-        <div class="dashboard-grid">
+        
+        <section class="panel dashboard-loss-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">LOSS TRACKING</p>
+              <h3>Unsuccessful Run Losses</h3>
+            </div>
+          </div>
+
+          <div class="loss-stats-grid">
+            <article class="loss-stat-card">
+              <span>Failed Runs</span>
+              <strong id="failedRunCount">0</strong>
+              <small>Lifetime unsuccessful runs</small>
+            </article>
+
+            <article class="loss-stat-card danger">
+              <span>Rolls Lost Over Time</span>
+              <strong id="lifetimeRollsLost">0</strong>
+              <small>Permanently removed from gang dirty rolls</small>
+            </article>
+
+            <article class="loss-stat-card">
+              <span>Rolls Returned</span>
+              <strong id="failedRollsReturned">0</strong>
+              <small>Attempted rolls kept after failures</small>
+            </article>
+
+            <article class="loss-stat-card danger">
+              <span>Estimated Value Lost</span>
+              <strong id="failedLossValue">$0</strong>
+              <small>Lost rolls × average dirty cost</small>
+            </article>
+
+            <article class="loss-stat-card">
+              <span>Recovery Rate</span>
+              <strong id="failedRecoveryRate">0%</strong>
+              <small>Returned rolls divided by attempted rolls</small>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel dirty-inventory-timeline-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">DIRTY INVENTORY HISTORY</p>
+              <h3>Recent Roll Activity</h3>
+            </div>
+          </div>
+
+          <div id="dirtyInventoryTimeline" class="ledger-timeline-list">
+            <div class="empty-state">Loading dirty-roll activity…</div>
+          </div>
+        </section>
+<div class="dashboard-grid">
           <section class="panel">
             <div class="panel-heading">
               <div>
@@ -1020,6 +1085,175 @@
         </section>
       </section>
 
+
+      <section id="unsuccessfulRunsView" class="view">
+        <div class="successful-runs-stats">
+          <article class="leaderboard-card">
+            <span>Failed Runs</span>
+            <strong id="unsuccessfulRunsCount">0</strong>
+            <small>Total unsuccessful runs</small>
+          </article>
+
+          <article class="leaderboard-card">
+            <span>Rolls Attempted</span>
+            <strong id="unsuccessfulRunsAttempted">0</strong>
+            <small>Total rolls sent to failed runs</small>
+          </article>
+
+          <article class="leaderboard-card">
+            <span>Rolls Lost</span>
+            <strong id="unsuccessfulRunsLost">0</strong>
+            <small>Permanently lost gang rolls</small>
+          </article>
+
+          <article class="leaderboard-card">
+            <span>Rolls Returned</span>
+            <strong id="unsuccessfulRunsReturned">0</strong>
+            <small>Returned to gang dirty inventory</small>
+          </article>
+        </div>
+
+        <section class="panel successful-runs-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">FAILURE TRACKING</p>
+              <h3>Unsuccessful Runs</h3>
+            </div>
+
+            <span
+              id="unsuccessfulRunsResultCount"
+              class="audit-result-count"
+            >
+              0 runs
+            </span>
+          </div>
+
+          <form
+            id="unsuccessfulRunForm"
+            class="successful-run-form"
+          >
+            <input id="unsuccessfulRunId" type="hidden">
+
+            <div class="form-grid">
+              <label>
+                Washer
+                <input
+                  id="unsuccessfulRunWasher"
+                  type="text"
+                  maxlength="100"
+                  placeholder="Washer name"
+                  required
+                >
+              </label>
+
+              <label>
+                Numbers Washed
+                <input
+                  id="unsuccessfulRunNumbersWashed"
+                  type="number"
+                  min="1"
+                  step="1"
+                  placeholder="200"
+                  required
+                >
+              </label>
+
+              <label>
+                Rolls Lost
+                <input
+                  id="unsuccessfulRunRollsLost"
+                  type="number"
+                  min="0"
+                  step="1"
+                  placeholder="100"
+                  required
+                >
+              </label>
+
+              <label>
+                Rolls Returned
+                <input
+                  id="unsuccessfulRunRollsReturned"
+                  type="number"
+                  value="0"
+                  readonly
+                >
+                <small id="unsuccessfulRunReturnedPreview">
+                  0 rolls returned
+                </small>
+              </label>
+
+              <label>
+                Reason
+                <input
+                  id="unsuccessfulRunReason"
+                  type="text"
+                  maxlength="180"
+                  value="Dealer kept half"
+                  required
+                >
+              </label>
+
+              <label>
+                Run Date
+                <input
+                  id="unsuccessfulRunDate"
+                  type="date"
+                  required
+                >
+              </label>
+
+              <label class="full-width">
+                Notes
+                <textarea
+                  id="unsuccessfulRunNotes"
+                  rows="3"
+                  maxlength="700"
+                  placeholder="Optional details"
+                ></textarea>
+              </label>
+            </div>
+
+            <div class="failed-run-formula">
+              Dirty rolls permanently removed =
+              <strong>Rolls Lost</strong>.
+              Returned rolls stay in gang dirty inventory.
+            </div>
+
+            <div class="form-actions">
+              <button
+                id="unsuccessfulRunSaveButton"
+                class="primary-button"
+                type="submit"
+              >
+                Save Unsuccessful Run
+              </button>
+
+              <button
+                id="unsuccessfulRunCancelEdit"
+                class="text-button hidden"
+                type="button"
+              >
+                Cancel Edit
+              </button>
+            </div>
+          </form>
+
+          <div class="successful-runs-filters">
+            <input
+              id="unsuccessfulRunsSearch"
+              type="search"
+              placeholder="Search washer, reason, notes, or submitted by"
+            >
+          </div>
+
+          <div
+            id="unsuccessfulRunsList"
+            class="successful-runs-list"
+          ></div>
+        </section>
+      </section>
+
       <section id="discordIntegrationView" class="view">
         <section class="panel discord-integration-panel">
           <div class="panel-heading">
@@ -1030,6 +1264,7 @@
           <div class="discord-integration-grid">
             <article class="discord-route-card"><span>Entry Records</span><strong>TRANSACTION_WEBHOOK</strong><small>New Entry Records are routed to this Discord channel.</small></article>
             <article class="discord-route-card"><span>Successful Runs</span><strong>RUNS_WEBHOOK</strong><small>New Successful Runs are routed to a separate channel.</small></article>
+            <article class="discord-route-card"><span>Unsuccessful Runs</span><strong>FAILED_RUNS_WEBHOOK</strong><small>Failed runs and lost rolls are routed to their own channel.</small></article>
             <article class="discord-route-card"><span>Test Channel</span><strong>DISCORD_TEST_WEBHOOK</strong><small>Used by the secure connection test below.</small></article>
           </div>
           <div class="discord-test-box">
@@ -1342,6 +1577,6 @@
 
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script type="module" src="main.js?v=27"></script>
+  <script type="module" src="main.js?v=29"></script>
 </body>
 </html>

@@ -22,7 +22,10 @@ const ROLE_PERMISSIONS = {
     createRuns: true,
     manageRuns: true,
     manageDiscordIntegration: true,
-    manageEmployeeRankings: true
+    manageEmployeeRankings: true,
+    viewFailedRuns: true,
+    createFailedRuns: true,
+    manageFailedRuns: true
   },
   admin: {
     view: true,
@@ -45,7 +48,10 @@ const ROLE_PERMISSIONS = {
     createRuns: true,
     manageRuns: true,
     manageDiscordIntegration: false,
-    manageEmployeeRankings: false
+    manageEmployeeRankings: false,
+    viewFailedRuns: true,
+    createFailedRuns: true,
+    manageFailedRuns: true
   },
   manager: {
     view: true,
@@ -68,7 +74,10 @@ const ROLE_PERMISSIONS = {
     createRuns: true,
     manageRuns: true,
     manageDiscordIntegration: false,
-    manageEmployeeRankings: false
+    manageEmployeeRankings: false,
+    viewFailedRuns: true,
+    createFailedRuns: true,
+    manageFailedRuns: true
   },
   employee: {
     view: true,
@@ -91,7 +100,10 @@ const ROLE_PERMISSIONS = {
     createRuns: true,
     manageRuns: false,
     manageDiscordIntegration: false,
-    manageEmployeeRankings: false
+    manageEmployeeRankings: false,
+    viewFailedRuns: true,
+    createFailedRuns: true,
+    manageFailedRuns: false
   },
   viewer: {
     view: true,
@@ -114,7 +126,10 @@ const ROLE_PERMISSIONS = {
     createRuns: false,
     manageRuns: false,
     manageDiscordIntegration: false,
-    manageEmployeeRankings: false
+    manageEmployeeRankings: false,
+    viewFailedRuns: true,
+    createFailedRuns: false,
+    manageFailedRuns: false
   }
 };
 

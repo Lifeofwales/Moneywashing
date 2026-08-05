@@ -8,6 +8,7 @@ export const DEFAULT_NAVIGATION_ORDER = [
   "new-entry",
   "records",
   "successful-runs",
+  "unsuccessful-runs",
   "operations",
   "inventory",
   "analytics",

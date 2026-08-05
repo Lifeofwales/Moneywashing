@@ -2551,3 +2551,161 @@ input[type="color"] {
     margin-top: 8px;
   }
 }
+
+
+.dashboard-loss-panel,
+.dirty-inventory-timeline-panel {
+  margin-top: 18px;
+}
+
+.loss-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.loss-stat-card {
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: var(--surface-2);
+}
+
+.loss-stat-card span,
+.loss-stat-card small,
+.loss-stat-card strong {
+  display: block;
+}
+
+.loss-stat-card span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.loss-stat-card strong {
+  margin: 10px 0 6px;
+  font-size: 22px;
+}
+
+.loss-stat-card small {
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.loss-stat-card.danger {
+  border-color: rgba(255, 102, 119, 0.34);
+  background: rgba(255, 102, 119, 0.06);
+}
+
+.loss-stat-card.danger strong {
+  color: var(--danger);
+}
+
+.ledger-timeline-list {
+  display: grid;
+  gap: 10px;
+}
+
+.ledger-timeline-item {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+  background: var(--surface-2);
+}
+
+.ledger-timeline-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  background: #0b1020;
+}
+
+.ledger-timeline-item.purchase .ledger-timeline-icon,
+.ledger-timeline-item.purchase .ledger-timeline-amount {
+  color: var(--success);
+}
+
+.ledger-timeline-item.success .ledger-timeline-icon {
+  color: var(--primary);
+}
+
+.ledger-timeline-item.failure .ledger-timeline-icon,
+.ledger-timeline-item.failure .ledger-timeline-amount {
+  color: var(--danger);
+}
+
+.ledger-timeline-main strong,
+.ledger-timeline-main small {
+  display: block;
+}
+
+.ledger-timeline-main small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.ledger-timeline-amount {
+  font-size: 13px;
+}
+
+.unsuccessful-run-card {
+  padding: 15px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--danger);
+  border-radius: 14px;
+  background: var(--surface-2);
+}
+
+.unsuccessful-run-card h4 {
+  margin: 13px 0 10px;
+  font-size: 18px;
+}
+
+.failed-run-formula {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid rgba(255, 102, 119, 0.3);
+  border-radius: 11px;
+  color: var(--muted);
+  background: rgba(255, 102, 119, 0.06);
+  font-size: 11px;
+}
+
+.failed-run-formula strong {
+  color: var(--danger);
+}
+
+#unsuccessfulRunReturnedPreview {
+  color: var(--success);
+  font-size: 10px;
+}
+
+@media (max-width: 1150px) {
+  .loss-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .loss-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ledger-timeline-item {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .ledger-timeline-amount {
+    grid-column: 2;
+  }
+}

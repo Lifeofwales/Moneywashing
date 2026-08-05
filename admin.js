@@ -49,6 +49,7 @@ const NAVIGATION_LABELS = {
   operations: "🏠 Operations Hub",
   inventory: "📦 Inventory Center",
   "successful-runs": "🏁 Successful Runs",
+  "unsuccessful-runs": "🔴 Unsuccessful Runs",
   "discord-integration": "🔗 Discord Integration",
   admin: "⚙ Admin Panel"
 };

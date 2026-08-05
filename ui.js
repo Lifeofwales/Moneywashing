@@ -12,6 +12,7 @@ const views = {
   operations: $("operationsView"),
   inventory: $("inventoryView"),
   "successful-runs": $("successfulRunsView"),
+  "unsuccessful-runs": $("unsuccessfulRunsView"),
   "discord-integration": $("discordIntegrationView"),
   admin: $("adminView")
 };
@@ -33,6 +34,7 @@ export function showView(name) {
     operations: "Operations Hub",
     inventory: "Inventory Center",
     "successful-runs": "Successful Runs",
+    "unsuccessful-runs": "Unsuccessful Runs",
     "discord-integration": "Discord Integration",
     admin: "Admin Panel"
   };

@@ -57,6 +57,12 @@ import {
   stopRuns
 } from "./successful-runs.js";
 import {
+  bindFailedRunsEvents,
+  applyFailedRunsPermissions,
+  startFailedRunsListener,
+  stopFailedRuns
+} from "./unsuccessful-runs.js";
+import {
   bindDiscordIntegrationEvents,
   applyDiscordPermissions
 } from "./discord-integration.js";
@@ -87,6 +93,7 @@ async function initialize() {
       stopOperationsListeners();
       stopInventoryListeners();
       stopRuns();
+      stopFailedRuns();
       stopWorkspacePreferences();
       stopFinancialLedgerListener();
       stopLiveListeners();
@@ -106,6 +113,7 @@ async function initialize() {
         bindOperationsEvents();
         bindInventoryEvents();
         bindRunsEvents();
+        bindFailedRunsEvents();
         bindDiscordIntegrationEvents();
         bindWorkspaceEvents();
         appEventsBound = true;
@@ -119,6 +127,7 @@ async function initialize() {
       applyOperationsPermissions();
       applyInventoryPermissions();
       applyRunsPermissions();
+      applyFailedRunsPermissions();
       applyDiscordPermissions();
 
       await startPresence(session);
@@ -127,6 +136,7 @@ async function initialize() {
       startOperationsListeners();
       startInventoryListeners();
       startRunsListener();
+      startFailedRunsListener();
       startFinancialLedgerListener();
 
       await ensureSettingsDocument();
